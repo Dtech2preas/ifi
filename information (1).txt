@@ -1,5 +1,6 @@
-# D-TECH Quiz Platform System Overview
+https://quiz.dtech-services.co.za
 
+# D-TECH Quiz Platform System Overv
 ## What is this platform?
 D-TECH is an educational platform designed for Grade 1-12 learners in South Africa. It helps students practice past papers and CAPS/NSC curriculum questions (like Mathematics, Physical Sciences, and more) through an interactive, gamified quiz system.
 Users can track their progress, earn points, buy cosmetic items, and compete on leaderboards.
