@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DTECH Student Marketplace | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for DTECH Student Marketplace." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DTECH Student Marketplace</h1>
+      <div class="subtext">Student Textbook Trading</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>1. Overview and Purpose</h2>
+<p><strong>What it is:</strong></p>
+<p>The DTECH Student Marketplace (also known as DTECH Book Exchange) is a peer-to-peer textbook marketplace tailored for students. It serves as an organized, centralized platform where students can browse available textbooks to buy or list the textbooks they are looking for.</p>
+<p><strong>Who runs it:</strong></p>
+<p>The project is run by Seakwa Jonas Mochebane (online alias: PREASX24), a South African technology founder, as part of the broader DTECH ecosystem.</p>
+<p><strong>What it's for:</strong></p>
+<p>Instead of students relying on scattered group chats or social media to find or sell textbooks, this application provides a centralized and clean UI to bridge the gap. It connects buyers directly with sellers or requesters over WhatsApp, making it easy to facilitate textbook exchange.</p>
+<h2>2. How the System Works (High-Level Architecture)</h2>
+<p>The system is a fully serverless web application that utilizes a separated Frontend and Backend architecture:</p>
+<ul>
+<li><strong>Frontend:</strong> A series of static HTML, CSS, and JS files (<code>index.html</code>, <code>admin.html</code>, <code>seller-manage.html</code>, etc.) served directly to the user's browser. It uses plain Vanilla JavaScript to make HTTP requests (fetch) to the backend API and handles client-side caching using IndexedDB for offline resilience. The UI theme follows a "DTech Blue & Black" branding, using a dark mode aesthetic with <code>#00D2FF</code> cyan accents.</li>
+<li><strong>Backend:</strong> A single, robust Cloudflare Worker (<code>worker.js</code>) script handles all routing, logic, and authentication.</li>
+<li><strong>Database:</strong> The backend utilizes Cloudflare KV (Key-Value) storage to persist all data. Everything is stored as JSON objects.</li>
+<li><strong>Image Hosting:</strong> Images are converted to Base64 strings and stored directly within the KV store's JSON objects. To prevent massive payloads when listing many books, the API dynamically strips out the base64 image data from the general <code>GET /</code> list endpoint. Images are loaded lazily on demand via a dedicated <code>GET /image?id=...</code> endpoint that returns binary image data.</li>
+</ul>
+<h2>3. The Backend API (`worker.js`)</h2>
+<p>The <code>worker.js</code> script handles cross-origin requests (CORS) from the frontend and routes operations based on the HTTP method and URL path.</p>
+<h3>Endpoints and Logic:</h3>
+<ul>
+<li><strong><code>OPTIONS *</code></strong>:</li>
+<li>Handles CORS preflight requests.</li>
+<li><strong><code>GET /</code></strong>:</li>
+<li>Fetches a list of all active books from the KV store (keys prefixed with <code>book:</code>).</li>
+<li>Returns a lightweight array of book JSON objects (strips out <code>image</code> and <code>sellerCode</code> for speed and privacy).</li>
+<li><strong><code>GET /?id=&lt;book_id&gt;</code></strong>:</li>
+<li>Fetches the full, unredacted JSON object for a specific book. This includes the massive base64 image string. Used primarily by the admin panel when editing an existing book.</li>
+<li><strong><code>GET /image?id=&lt;book_id&gt;</code></strong>:</li>
+<li>Fetches a book's JSON object, extracts the base64 string, decodes it into a binary <code>Uint8Array</code>, and serves it back with proper image MIME types and a 1-year cache control header. This acts as a pseudo-CDN for images.</li>
+<li><strong><code>GET /stats</code></strong>:</li>
+<li>Calculates and returns site statistics for the frontend Stats Modal.</li>
+<li>Counts all <code>book:</code> keys (Books Listed).</li>
+<li>Counts the number of active sellers in <code>system:sellers</code>.</li>
+<li>Retrieves total historically sold count from <code>system:stats</code>.</li>
+<li><strong><code>GET /sellers</code></strong>:</li>
+<li><strong>Auth Required:</strong> <code>X-Admin-Password</code> header must be provided.</li>
+<li>Returns the <code>system:sellers</code> map containing seller contact numbers, display names, 4-letter access codes, and total listings count.</li>
+<li><strong><code>POST /seller/login</code></strong>:</li>
+<li>Expects a 4-letter <code>code</code> in the JSON body.</li>
+<li>Iterates through all books in the KV store to find those where <code>sellerCode</code> matches the provided code. Returns the matching list of books. Used by sellers to manage their own items.</li>
+<li><strong><code>POST /admin/migrate</code></strong>:</li>
+<li><strong>Auth Required:</strong> <code>X-Admin-Password</code> header must be provided.</li>
+<li>A maintenance endpoint that iterates through all existing books, groups them by contact phone number, and automatically generates/assigns a unique 4-letter code to each seller, saving it back to KV.</li>
+<li><strong><code>POST /</code></strong>:</li>
+<li><strong>Auth Required:</strong> <code>X-Admin-Password</code> header must be provided.</li>
+<li>Adds a new book to the database. Generates a unique <code>book:&lt;timestamp&gt;-&lt;random&gt;</code> ID. Either looks up the existing seller's 4-letter code or generates a new one. Creates the new book JSON in KV.</li>
+<li><strong><code>PUT /?id=&lt;book_id&gt;</code></strong>:</li>
+<li><strong>Auth Required:</strong> <code>X-Admin-Password</code> header must be provided.</li>
+<li>Updates an existing book. If the contact number is changed, it re-evaluates the <code>sellerCode</code> mapping.</li>
+<li><strong><code>DELETE /?id=&lt;book_id&gt;</code></strong>:</li>
+<li><strong>Auth Required:</strong> Either <code>X-Admin-Password</code> (Admin) OR <code>X-Seller-Code</code> matching the book's owner code (Seller).</li>
+<li>Deletes the specific book from the KV store.</li>
+<li>Increments the <code>sold</code> tally counter inside <code>system:stats</code> so total historical sales are tracked even when the item is gone.</li>
+</ul>
+<h2>4. File Breakdown</h2>
+<h3>`index.html` (The Main User View)</h3>
+<ul>
+<li><strong>Purpose:</strong> The core marketplace where students browse textbooks.</li>
+<li><strong>Features:</strong></li>
+<li>Displays a compact header with a logo and navigation.</li>
+<li>A tabbed switcher allows users to toggle between "Buy Books" (items for sale) and "Looking For Books" (requested items).</li>
+<li>A robust search bar filtering logic (by title, author, or seller) and sorting dropdown (Newest, A-Z, Z-A).</li>
+<li>Fetches data from <code>worker.js</code> and implements a "network-first, fallback to cache" strategy using IndexedDB (<code>BooksDB</code>). If the user goes offline, it still shows previously cached books.</li>
+<li>Books are displayed in a responsive CSS Grid. The UI shows a "NEW" badge on books uploaded within the last 7 days.</li>
+<li>Clicking a book opens an enhanced Modal displaying full details, fallback logic for missing cover images, and a button to initiate a WhatsApp chat directly with the buyer/seller pre-filled with context about the specific book.</li>
+<li>Incorporates a Stats Modal that displays animated numerical counters for Listed Books, Active Sellers, Books Sold, and overall Site Visitors (fetched from a secondary counter worker).</li>
+<li>Implements deep-linking via the <code>?book=&lt;id&gt;</code> URL parameter so users can share links to specific books.</li>
+</ul>
+<h3>`admin.html` (The Admin Portal)</h3>
+<ul>
+<li><strong>Purpose:</strong> Used strictly by site operators to manage the entire marketplace.</li>
+<li><strong>Features:</strong></li>
+<li>Requires the admin password for any destructive or write actions. The password is automatically persisted locally in <code>localStorage</code> for 3 days to improve admin UX.</li>
+<li>Contains a heavy form to create new listings. It handles both "Selling" and "Looking For" types, adjusting required fields dynamically (e.g. author and image are optional for "Looking For").</li>
+<li>Integrates <code>Cropper.js</code> so admins can immediately crop and format images before they are converted into a Base64 string and pushed to the backend.</li>
+<li>Has a Seller Management section to manually view, refresh, or migrate all sellers and their 4-letter access codes.</li>
+<li>Displays a list of all current books, giving the admin buttons to "Edit" or "Delete" any entry.</li>
+</ul>
+<h3>`seller-manage.html` (The Seller Portal)</h3>
+<ul>
+<li><strong>Purpose:</strong> Allows standard users (sellers) who have listed books to manage their own specific listings without needing admin access.</li>
+<li><strong>Features:</strong></li>
+<li>Provides a login interface where sellers input their unique 4-letter code (assigned when the admin creates their first listing).</li>
+<li>Authenticates via the <code>POST /seller/login</code> worker endpoint.</li>
+<li>If successful, stores the code in <code>sessionStorage</code> and displays only the books belonging to that specific seller.</li>
+<li>Sellers are strictly permitted to <strong>Delete</strong> their own listings (e.g., if a book was successfully sold). They cannot edit book details. Deletions use the <code>X-Seller-Code</code> header to prove authorization to the worker.</li>
+</ul>
+<h3>`services.html` (The "Add a Listing" Contact Page)</h3>
+<ul>
+<li><strong>Purpose:</strong> Directs users on how to submit a book to the platform.</li>
+<li><strong>Features:</strong></li>
+<li>Standard users cannot upload directly to the database. Instead, this page gives them instructions on the required info (Name, Price, Phone Number, Picture).</li>
+<li>Provides prominent "Start Selling on WhatsApp" or "Request a Book via WhatsApp" buttons. These buttons use <code>wa.me</code> links to pre-fill a WhatsApp message to the admin's phone number (<code>27686620552</code>), allowing the admin to vet the details and upload the book manually via <code>admin.html</code>.</li>
+</ul>
+<h3>`about.html`</h3>
+<ul>
+<li><strong>Purpose:</strong> The information page for the platform and its context within the DTECH ecosystem.</li>
+<li><strong>Features:</strong></li>
+<li>Provides a textual overview explaining how the Book Exchange simplifies textbook acquisition for students.</li>
+<li>Contains an "Ecosystem Highlight" section outlining the founder, Seakwa Jonas Mochebane (PREASX24), and lists the other connected platforms like <code>preasx24.co.za</code> (past papers) and <code>apps.dtech-services.co.za</code>.</li>
+</ul>
+<h3>`worker.js`</h3>
+<ul>
+<li><strong>Purpose:</strong> As detailed above, the backend brains of the operation utilizing Cloudflare Workers. It handles all database I/O, security logic, ID generation, and seller-code mapping logic.</li>
+</ul>
+<h3>Other Assets</h3>
+<ul>
+<li><strong><code>logo.png</code></strong>: The primary branding asset used in the header and Open Graph tags.</li>
+<li><strong><code>CNAME</code></strong>: Contains DNS records binding the custom domain (<code>books.dtech-services.co.za</code>) to the repository hosting (often used for GitHub Pages or Cloudflare Pages frontend deployments).</li>
+</ul>
+<p>---</p>
+<p>*Generated as a Full System Analysis to document architecture, file definitions, and backend methodologies for the DTECH ecosystem.*</p>
+
+        <a href="https://books.dtech-services.co.za" class="btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Visit Live Platform</a>
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>

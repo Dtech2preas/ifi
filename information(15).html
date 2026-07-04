@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>: DTECH Apps Store | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for : DTECH Apps Store." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>: DTECH Apps Store</h1>
+      <div class="subtext">Native Android Applications</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>1. Overview</h2>
+<ul>
+<li><strong>What it is</strong>: A static, Single Page Application (SPA) website functioning as a custom App Store for downloading Android applications (APK files) created by DTECH.</li>
+<li><strong>What it's for</strong>: Providing a fast, user-friendly, responsive interface for users to discover, view details, and download DTECH applications directly to their mobile devices or computers.</li>
+<li><strong>Who it is for</strong>: Both general users wanting to download apps (offering a streamlined UI) and developers looking to understand or maintain the system architecture (offering a simple, backend-free setup).</li>
+</ul>
+<h2>2. Architecture & How it Works</h2>
+<ul>
+<li><strong>Static Hosting Architecture</strong>: The system has no backend server or database. It is entirely composed of static files (HTML, CSS, JS) and static assets (images, APKs, JSON). This makes it perfectly suited for hosting platforms like GitHub Pages, Cloudflare Pages, or standard web servers.</li>
+<li><strong>Single Page Application (SPA) Flow</strong>: The entire application lives within a single HTML file (<code>index.html</code>). Different "views" (Homepage and App Details) are controlled via CSS classes (specifically the <code>.active</code> class). JavaScript handles the swapping of these views without requiring full page reloads, making the site feel fast and app-like.</li>
+<li><strong>Data Loading & Discovery</strong>: The system does not connect to an API or database. Instead, data is loaded via standard HTTP <code>fetch</code> requests targeting static JSON files (<code>details.json</code>) located in subdirectories for each app inside the <code>download/</code> folder.</li>
+<li><strong>Asset Probing</strong>: Images (like app icons and screenshots) are not hardcoded. The application proactively probes for various image formats (.png, .jpg, .jpeg, .webp) using <code>Image</code> object loading to determine if the assets exist.</li>
+</ul>
+<h2>3. Detailed Request Explanations</h2>
+<h3>Data Fetching (Network Requests)</h3>
+<ul>
+<li>JavaScript uses the <code>fetch()</code> API to asynchronously retrieve metadata from each app's <code>details.json</code> file.</li>
+<li>The state variable <code>appsData</code> is populated using <code>Promise.all()</code>, which simultaneously fires off requests for a predefined array of folder names (<code>appFolders</code>).</li>
+<li><strong>Error Handling</strong>: If an app's <code>details.json</code> is missing or the request fails (e.g., a 404 error), the error is caught, and the app is simply omitted from the grid without crashing the rest of the application.</li>
+</ul>
+<h3>Image Discovery and Rendering</h3>
+<ul>
+<li>Because there is no backend server to list directory contents, the app uses a clever probing technique to find images.</li>
+<li><strong><code>checkImageExists(url)</code></strong>: This function attempts to load a given URL via an <code>Image</code> constructor (<code>new Image()</code>). It resolves a promise to <code>true</code> if the <code>onload</code> event fires, and <code>false</code> if <code>onerror</code> fires.</li>
+<li><strong><code>findExistingImage(basePath, name)</code></strong>: This loops through a list of possible extensions (<code>.png</code>, <code>.jpg</code>, <code>.jpeg</code>, <code>.webp</code>) and attempts to load them sequentially using <code>checkImageExists</code>.</li>
+<li><strong>Screenshots Logic</strong>: For screenshots, the script runs a loop from <code>pic1</code> up to a set maximum limit (e.g., 30). It tracks the last successfully loaded screenshot index and renders all screenshots up to that point. If a screenshot in the sequence is missing (e.g., <code>pic1</code> exists, <code>pic2</code> is missing, <code>pic3</code> exists), it renders a placeholder for the missing one, up to the highest found index.</li>
+</ul>
+<h2>4. File-by-File Breakdown</h2>
+<h3>`index.html`</h3>
+<ul>
+<li><strong>Purpose</strong>: The main structural skeleton of the application.</li>
+<li><strong>Sections</strong>:</li>
+<li><code>&lt;head&gt;</code>: Contains metadata, the title, and the link to <code>styles.css</code>.</li>
+<li><code>&lt;header&gt;</code>: The sticky top navigation area showing the "DTECH Apps" branding.</li>
+<li><code>&lt;main&gt;</code>: Contains the main content views.</li>
+<li><code>#homepage</code>: A grid container (<code>#app-grid</code>) for injecting app preview cards dynamically.</li>
+<li><code>#app-details</code>: A detailed view container showing the app icon, title, developer, version, description, a dynamic screenshot gallery (<code>#screenshots-gallery</code>), and dynamic sections (<code>#detail-dynamic-sections</code> for "What's New", "Key Features", etc.).</li>
+<li><code>&lt;footer&gt;</code>: Simple copyright section.</li>
+<li><code>#image-modal</code>: A full-screen hidden overlay for viewing screenshots or icons at a larger size.</li>
+<li><strong>Functionality</strong>: Serves as the DOM canvas. Empty containers are filled dynamically by JavaScript based on the fetched data.</li>
+</ul>
+<h3>`styles.css`</h3>
+<ul>
+<li><strong>Purpose</strong>: The styling and layout engine.</li>
+<li><strong>Design Language</strong>: Implements the DTECH black and neon-blue (<code>#00e5ff</code>) modern theme.</li>
+<li><strong>Key Features</strong>:</li>
+<li><strong>CSS Variables</strong>: Uses <code>:root</code> for centralized color management (e.g., <code>--primary-blue</code>, <code>--dark-bg</code>, <code>--card-bg</code>).</li>
+<li><strong>Responsiveness</strong>: Mobile-first responsive design using flexbox and CSS grid (<code>.app-grid</code> with <code>auto-fill</code> and <code>minmax</code>).</li>
+<li><strong>SPA View Toggling</strong>: Implements the view toggle by defaulting <code>.view</code> to <code>display: none;</code> and toggling <code>display: block;</code> when the <code>.active</code> class is applied.</li>
+<li><strong>Animations</strong>: CSS animations (e.g., <code>@keyframes fadeIn</code>, modal zooming) for smooth user interactions.</li>
+<li><strong>UI Enhancements</strong>: Custom scrollbar styling for the horizontal screenshot gallery, hover effects with box-shadows on buttons and app cards to provide tactile feedback.</li>
+</ul>
+<h3>`app.js`</h3>
+<ul>
+<li><strong>Purpose</strong>: The core logic engine driving the SPA behavior, data fetching, and DOM manipulation.</li>
+<li><strong>Core Variables</strong>:</li>
+<li><code>appFolders</code>: A hardcoded array of directory names (e.g., <code>'grade12_assist'</code>, <code>'music_app'</code>). This tells the script which folders to query within the <code>download/</code> directory.</li>
+<li><code>appsData</code>: An array storing the successfully fetched metadata objects for each app.</li>
+<li><strong>Key Functions</strong>:</li>
+<li><code>initApp()</code>: The main entry point on DOM content load. Sets up navigation listeners, triggers data loading, and renders the homepage.</li>
+<li><code>loadAppsData()</code>: Maps over <code>appFolders</code> to fetch <code>details.json</code> for each folder. Uses <code>Promise.all()</code> to await all fetches. Also resolves the correct icon path for each app.</li>
+<li><code>renderHomepage()</code>: Clears the <code>#app-grid</code>, iterates through <code>appsData</code>, and dynamically constructs HTML elements (<code>.app-card</code>) using template literals to display the app list.</li>
+<li><code>showAppDetails(app)</code>:</li>
+<li>Injects data from a specific app object into the corresponding DOM elements of the <code>#app-details</code> view.</li>
+<li>Handles dynamic rendering of optional fields (<code>whatsNew</code>, <code>keyFeatures</code>, <code>permissions</code>, <code>tags</code>).</li>
+<li>Initiates the screenshot probing loop (up to 30 images) and renders them into the gallery.</li>
+<li>Updates the browser's document title and switches the active view.</li>
+<li><code>showHomepage()</code>: Toggles CSS classes to hide details, show the homepage grid, and reset the document title.</li>
+<li><code>openImageModal(src)</code>: Controls the display of the full-screen image viewer, setting the source of the modal image to the clicked image's source.</li>
+</ul>
+<h2>5. Directory Structure (`download/`)</h2>
+<ul>
+<li><strong>Purpose</strong>: The central storage location for all app-specific assets and metadata.</li>
+<li><strong>Structure</strong>: Each app has its own subfolder inside <code>download/</code> matching its folder identifier (e.g., <code>download/study_app/</code>).</li>
+<li><strong>Conventions per App Folder</strong>:</li>
+<li><code>details.json</code>: Contains the application's metadata (name, version, descriptions, tags, category, developer, etc.). This schema is dynamic; optional arrays (like <code>keyFeatures</code> or <code>whatsNew</code>) are rendered if present.</li>
+<li><code>[folder_name].apk</code>: The actual Android application package for download (e.g., <code>study_app.apk</code>). The system assumes the APK file name exactly matches the folder name.</li>
+<li><code>icon.[ext]</code>: The app icon.</li>
+<li><code>pic1.[ext]</code>, <code>pic2.[ext]</code>, etc.: The sequential screenshot images.</li>
+<li><strong>Extension Flexibility</strong>: Visual assets (icons, screenshots) can utilize <code>.png</code>, <code>.jpg</code>, <code>.jpeg</code>, or <code>.webp</code> formats. The frontend automatically determines which one exists.</li>
+</ul>
+<h2>6. Deployment & Workflow Summary</h2>
+<ul>
+<li><strong>Adding a new app</strong>:</li>
+</ul>
+<p>1. Create a new folder in <code>download/</code> (e.g., <code>download/new_app/</code>).</p>
+<p>2. Add the APK, named identically to the folder (<code>new_app.apk</code>).</p>
+<p>3. Add <code>icon.[ext]</code> and screenshots (<code>pic1.[ext]</code>, <code>pic2.[ext]</code>, etc.).</p>
+<p>4. Add a <code>details.json</code> containing the required metadata.</p>
+<p>5. Edit <code>app.js</code> and add <code>'new_app'</code> to the <code>appFolders</code> array.</p>
+<ul>
+<li><strong>Hosting</strong>: Because it lacks a server-side dependency, the site relies entirely on client-side browser execution. It works perfectly on any static file host like GitHub Pages, Cloudflare Pages, AWS S3, or Nginx.</li>
+</ul>
+
+        <a href="https://apps.dtech-services.co.za" class="btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Visit Live Platform</a>
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DTECH Student Business Hub  System  & ation | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for DTECH Student Business Hub  System  & ation." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DTECH Student Business Hub  System  & ation</h1>
+      <div class="subtext">Student Business Management</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>1. Platform Overview</h2>
+<p>The DTECH Student Business Hub is a web-based marketplace and directory platform designed specifically for students to list, promote, and manage their small businesses. It functions as a centralized hub where potential customers can discover student-run services and products, while giving student entrepreneurs a professional, customizable online presence.</p>
+<p><strong>Target Audience:</strong></p>
+<ul>
+<li><strong>Student Entrepreneurs:</strong> To register, onboard their business details (basic info, contact, branding, listings), preview their dynamic site, and manage it via a dashboard.</li>
+<li><strong>Customers / General Public:</strong> To browse the marketplace, filter by categories, view dynamic business profiles, and contact businesses (primarily via WhatsApp).</li>
+<li><strong>Administrators:</strong> To review, approve, request changes, suspend, or manage business applications.</li>
+</ul>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Dynamic Subdomain Routing:</strong> Businesses get their own virtual space (e.g., <code>https://[slug].business.dtech-services.co.za</code>).</li>
+<li><strong>Step-by-step Onboarding & Editing:</strong> A 7-step wizard (separated into individual HTML files) for creating and updating a business profile.</li>
+<li><strong>Draft & Published State Management:</strong> Edits are saved as drafts and only go live to the public when explicitly published.</li>
+<li><strong>Admin Workflow:</strong> Status tracking (Draft, Pending Review, Approved, Request Changes, Suspended).</li>
+<li><strong>Marketplace Directory:</strong> A central directory rotating daily to ensure fair exposure.</li>
+</ul>
+<p>---</p>
+<h2>2. Architecture & Data Flow</h2>
+<p>The platform is built using a modern, serverless architecture.</p>
+<h3>Tech Stack:</h3>
+<ul>
+<li><strong>Frontend:</strong> Pure HTML, CSS (global <code>styles.css</code>), and Vanilla JavaScript.</li>
+<li><strong>Backend:</strong> Cloudflare Workers (<code>worker.js</code>) running in a serverless edge environment.</li>
+<li><strong>Database / Storage:</strong> Cloudflare KV (Key-Value store), utilizing the <code>MARKET_KV</code> namespace.</li>
+<li><strong>Bundler:</strong> ESBuild (<code>esbuild.mjs</code>) is used to bundle backend dependencies (<code>bcryptjs</code> for password hashing, <code>jose</code> for JWTs) into a single <code>worker.js</code> distribution.</li>
+<li><strong>Image Hosting:</strong> ImgBB API (external, proxied securely through the worker).</li>
+</ul>
+<h3>How It Works (The Data Flow):</h3>
+<p>1. <strong>Frontend to Backend Communication:</strong> The frontend vanilla JS uses the <code>fetch()</code> API to send asynchronous requests to the Cloudflare Worker absolute URL (<code>https://late-frost-770c.nakiaklocko57.workers.dev</code>).</p>
+<p>2. <strong>Authentication:</strong> User registration hashes passwords using <code>bcryptjs</code>. Login generates a JWT using <code>jose</code>, which is stored in local storage and sent in the <code>Authorization: Bearer &lt;token&gt;</code> header for protected requests.</p>
+<p>3. <strong>Drafting (Local vs Cloud):</strong> While going through the onboarding or editing steps, data is temporarily stored in the browser's <code>localStorage</code> (prefixed with <code>onboarding_</code> or <code>editor_</code>). Once the user reaches the end and submits, it is pushed to the backend.</p>
+<p>4. <strong>Cloudflare KV Storage Strategy:</strong></p>
+<ul>
+<li>Users are stored under <code>user:&lt;id&gt;</code>. Emails mapped via <code>email:&lt;email&gt;</code>.</li>
+<li>Businesses are stored under <code>business:&lt;id&gt;</code>.</li>
+<li>Business lookups via slug map <code>slug:&lt;slug&gt;</code> to <code>&lt;business_id&gt;</code>.</li>
+<li>User-to-Business mappings use <code>user_business:&lt;user_id&gt;</code> to <code>&lt;business_id&gt;</code>.</li>
+<li>The marketplace directory uses a lightweight array under the key <code>marketplace:index</code> to avoid heavy database scanning.</li>
+</ul>
+<p>5. <strong>Dynamic Rendering:</strong> When a request hits a specific subdomain (<code>slug.business.dtech-services.co.za</code>), the Cloudflare Worker intercepts it. It looks up the slug in KV, retrieves the business data, and injects it into a pre-defined HTML template shell (<code>business-dynamic.html</code>) generated directly by the worker.</p>
+<p>---</p>
+<h2>3. API Requests and Endpoints</h2>
+<p>All backend logic is handled inside <code>worker.js</code> via the <code>fetch</code> event listener.</p>
+<h3>Subdomain Routing</h3>
+<ul>
+<li><strong>Method:</strong> <code>GET</code></li>
+<li><strong>Path:</strong> <code>https://[slug].business.dtech-services.co.za/</code></li>
+<li><strong>Explanation:</strong> If the Worker detects a subdomain that isn't <code>api</code>, <code>www</code>, <code>admin</code>, etc., it treats it as a business slug. It looks up the <code>slug</code> in KV. If found, it returns an HTML shell string (containing inline CSS/JS). The JS inside this shell then makes a secondary <code>fetch</code> to <code>/api/business/[slug]</code> to load the actual JSON data and populate the DOM.</li>
+</ul>
+<h3>Authentication API</h3>
+<ul>
+<li><strong><code>POST /api/auth/register</code></strong>: Accepts <code>email</code>, <code>password</code>, <code>fullName</code>. Hashes the password using <code>bcryptjs</code> and stores the user in KV.</li>
+<li><strong><code>POST /api/auth/login</code></strong>: Accepts <code>email</code>, <code>password</code>. Verifies credentials and returns a signed JWT using <code>jose</code>.</li>
+<li><strong><code>GET /api/auth/me</code></strong>: Requires JWT. Returns the authenticated user's details.</li>
+</ul>
+<h3>Marketplace API (Public)</h3>
+<ul>
+<li><strong><code>GET /api/marketplace</code></strong>: Returns the <code>marketplace:index</code> from KV, filtering for businesses with <code>published</code>, <code>approved</code>, or <code>verified</code> statuses.</li>
+<li><strong><code>GET /api/business/[slug]</code></strong>: Looks up a business by slug and returns its full JSON representation (both draft and published versions).</li>
+</ul>
+<h3>Dashboard & Business Management API (Protected)</h3>
+<ul>
+<li><strong><code>GET /api/dashboard/my-business</code></strong>: Uses the JWT to find the user's ID, looks up <code>user_business:&lt;userId&gt;</code>, and returns their specific business data.</li>
+<li><strong><code>POST /api/dashboard/business</code></strong>: Accepts massive JSON payloads containing <code>basic</code>, <code>contact</code>, <code>branding</code>, <code>listings</code>, <code>sections</code>, and <code>cta</code> data.</li>
+<li>If it's a new business, creates it in KV as a draft.</li>
+<li>If updating, it updates the <code>draftVersion</code> object within the KV record.</li>
+<li><strong><code>POST /api/dashboard/publish</code></strong>: Takes a business ID. Checks if the status is <code>approved</code> or <code>verified</code>. If so, it copies the <code>draftVersion</code> over to the <code>publishedVersion</code> and updates the <code>marketplace:index</code> so changes are visible to the public.</li>
+<li><strong><code>POST /api/upload</code></strong>: Accepts <code>multipart/form-data</code> with an image. Proxies the image to the external ImgBB API using a hidden secret key, returning the secure URL string back to the frontend.</li>
+</ul>
+<h3>Admin API (Protected)</h3>
+<ul>
+<li><strong><code>GET /admin/businesses</code></strong>: Scans the KV namespace for all keys starting with <code>business:</code> to return a comprehensive list of all businesses on the platform for admin review.</li>
+<li><strong><code>POST /admin/action</code></strong>: Accepts an ID and an action (<code>approve</code>, <code>request_changes</code>, <code>decline</code>, <code>disable</code>). Modifies the business status. If <code>approve</code> is sent for the first time, it auto-publishes the draft data to live.</li>
+<li><strong><code>POST /admin/edit</code></strong>: Allows an admin to directly modify specific fields of a business (like its name).</li>
+</ul>
+<p>---</p>
+<h2>4. Detailed File Breakdown</h2>
+<h3>Root Configuration Files</h3>
+<ul>
+<li><strong><code>package.json</code> / <code>package-lock.json</code></strong>: NPM configuration files containing dependencies (<code>bcryptjs</code>, <code>jose</code>) and scripts.</li>
+<li><strong><code>esbuild.mjs</code></strong>: The build script that uses ESBuild to bundle the Node.js modules into a format compatible with Cloudflare Workers.</li>
+<li><strong><code>wrangler.toml</code></strong>: The Cloudflare configuration file detailing the worker name, main entry point (<code>dist/worker.js</code>), and the KV namespace binding (<code>MARKET_KV</code>).</li>
+<li><strong><code>worker.js</code></strong>: The core backend file containing all the routing, API endpoint logic, KV interactions, and dynamic HTML generation.</li>
+</ul>
+<h3>Global Assets</h3>
+<ul>
+<li><strong><code>styles.css</code></strong>: The single, centralized CSS file powering the entire platform. Uses CSS variables for consistent theming (dark blue aesthetic), responsive grid layouts, pill-style buttons, and modern shadow styling.</li>
+<li><strong><code>index.html</code></strong>: The main public landing page. Displays the marketplace directory, allowing users to filter and browse published businesses.</li>
+<li><strong><code>login.html</code> & <code>register.html</code></strong>: The authentication screens for students to create accounts and log in to the dashboard.</li>
+</ul>
+<h3>Dashboard & Business Management</h3>
+<ul>
+<li><strong><code>dashboard.html</code></strong>: The central hub for a logged-in student. Shows the current status of their business (Draft, Pending, Approved), analytics, and provides links to start or edit their profile.</li>
+</ul>
+<h3>The Onboarding Flow (Creation)</h3>
+<p>These files represent the 7-step wizard a new user takes to create their business. Data is saved in <code>localStorage</code> under <code>onboarding_</code> keys.</p>
+<ul>
+<li><strong><code>onboarding-1-basic.html</code></strong>: Collects Business Name, Category, Province, Tagline, and Description.</li>
+<li><strong><code>onboarding-2-contact.html</code></strong>: Collects Email, Phone, WhatsApp number, Address, and Social Links.</li>
+<li><strong><code>onboarding-3-branding.html</code></strong>: Handles uploading the Logo, Cover Image, and Gallery images (interfaces with <code>/api/upload</code>).</li>
+<li><strong><code>onboarding-4-listings.html</code></strong>: Allows users to add multiple products or services, defining prices, categories, and descriptions.</li>
+<li><strong><code>onboarding-5-sections.html</code></strong>: A toggle interface to enable/disable specific sections (Hero, About, Gallery, Listings) on their dynamic site.</li>
+<li><strong><code>onboarding-6-cta.html</code></strong>: Configures the main Call-To-Action button (e.g., "WhatsApp Us" vs "Get a Quote").</li>
+<li><strong><code>onboarding-7-preview.html</code></strong>: The final step. Compiles all <code>localStorage</code> data, shows a preview, and submits the massive JSON payload to <code>/api/dashboard/business</code>.</li>
+<li><strong><code>onboarding-preview-desktop.html</code> & <code>onboarding-preview-mobile.html</code></strong>: IFrames used within step 7 to show responsive mockups of what the site will look like.</li>
+</ul>
+<h3>The Editor Flow (Post-Approval Updates)</h3>
+<p>These files mirror the onboarding flow exactly but are used *after* a business has been created. They use <code>editor_</code> prefixes in <code>localStorage</code> and load existing <code>draftVersion</code> data from the server.</p>
+<ul>
+<li><strong><code>editor-1-basic.html</code></strong> through <strong><code>editor-6-cta.html</code></strong>: Same UI as onboarding, but purposed for editing existing data.</li>
+<li><strong><code>editor-7-preview.html</code></strong>: Allows users to preview their draft edits and explicitly "Publish" them using <code>/api/dashboard/publish</code>.</li>
+</ul>
+<h3>The Admin System</h3>
+<ul>
+<li><strong><code>admin.html</code></strong>: The main admin overview/dashboard showing high-level stats.</li>
+<li><strong><code>admin-sidebar.html</code></strong>: A shared UI component for the admin navigation.</li>
+<li><strong><code>admin-pending.html</code></strong>: Lists businesses that are in the "Draft" or "Pending Review" status, allowing admins to Approve, Decline, or Request Changes.</li>
+<li><strong><code>admin-review.html</code></strong>: A detailed view for an admin to scrutinize a specific application before approving.</li>
+<li><strong><code>admin-approved.html</code></strong>: Lists currently active/approved businesses, allowing admins to Suspend them or make direct edits.</li>
+</ul>
+<h3>Dynamic Business Rendering</h3>
+<ul>
+<li><strong><code>business-dynamic.html</code></strong>: The shell template used to render the final product for a business. Note: Much of the actual logic for this is now dynamically injected directly from the <code>worker.js</code> file when a subdomain is accessed, but this file serves as the standalone structural reference.</li>
+<li><strong><code>business-profile.html</code></strong>: An alternative viewing page accessed via <code>?slug=...</code> instead of a subdomain, used for previewing or when subdomain routing is bypassed.</li>
+</ul>
+<h3>Image Assets</h3>
+<ul>
+<li><strong><code>*.png</code> (e.g., <code>admin-review.png</code>, <code>dashboard.png</code>, <code>editor.png</code>, <code>onboarding.png</code>)</strong>: Likely design wireframes, mockups, or screenshots kept in the repository for reference during development.</li>
+</ul>
+
+        <a href="https://business.dtech-services.co.za" class="btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Visit Live Platform</a>
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>

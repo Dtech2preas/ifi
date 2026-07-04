@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DTech  & | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for DTech  &." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DTech  &</h1>
+      <div class="subtext">D-TECH Engineering Project</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>1. System Overview</h2>
+<p><strong>DTech</strong> is an innovative Android application built with Flutter that transforms a mobile device into an active web server. It allows users to host and serve a static website (HTML, CSS, JS, Images, etc.) directly from their phone's local storage.</p>
+<p>What makes DTech uniquely powerful is its dual-mode accessibility:</p>
+<p>1.  <strong>Local Wi-Fi Mode:</strong> Devices on the same Wi-Fi network can access the hosted website directly via the phone's local IP address.</p>
+<p>2.  <strong>Global Internet Tunneling Mode:</strong> Users anywhere in the world can access the phone's local web server through a public subdomain without the need for complex port forwarding, proxy servers, or centralized relay points (like Ngrok).</p>
+<p><strong>The Core Problem Solved:</strong></p>
+<p>Mobile networks often use Carrier-Grade NAT (CGNAT) and strict firewalls, making it impossible to expose a local port on a mobile phone to the public internet using traditional methods. Cloudflare tunnels often face Anycast data center isolation issues. DTech bypasses these limitations by establishing a direct <strong>Peer-to-Peer (P2P) WebRTC connection</strong> between the visitor's web browser and the Flutter application on the phone. This allows HTTP traffic to be tunneled seamlessly over WebRTC data channels, turning the browser itself into a proxy.</p>
+<p>---</p>
+<h2>2. Architecture & How It Works</h2>
+<p>The architecture of DTech is divided into two major components: the <strong>Local Web Server</strong> (on the phone) and the <strong>WebRTC Tunnel</strong> (the bridge between the global internet and the phone).</p>
+<h3>A. The Local Web Server</h3>
+<p>When a user selects a folder and starts the server via the Flutter UI, the app utilizes the Dart <code>shelf</code> and <code>shelf_static</code> packages to bind an HTTP server to port 8080. This server listens for incoming HTTP requests (GET, POST, etc.) and serves the static files from the selected directory. This handles the core file-hosting functionality.</p>
+<h3>B. The WebRTC Tunnel (The Magic)</h3>
+<p>When global tunneling is enabled, the app establishes an internet gateway. This involves several coordinated moving parts:</p>
+<p>1.  <strong>Signaling via Firebase Realtime Database:</strong></p>
+<p>Because the visitor's browser and the Android phone do not initially know how to connect to each other across the internet, they use a Firebase Realtime Database as a "Signaling Server". They exchange Session Description Protocol (SDP) "Offers" and "Answers", as well as ICE Candidates (which map out potential network paths) through this central database. Once they find a valid path (often using public STUN servers provided by Google), the direct P2P connection is established, and Firebase steps out of the way.</p>
+<p>2.  <strong>The Cloudflare Worker App Shell (<code>worker.js</code>):</strong></p>
+<p>When a visitor navigates to the user's public subdomain (managed by Cloudflare), a Cloudflare Worker intercepts the request. Instead of serving the website directly (which it can't, because the files are on the phone), the Worker serves an "App Shell". This is a basic HTML file containing JavaScript.</p>
+<ul>
+<li>  This App Shell connects to Firebase, initiates the WebRTC signaling process with the phone, and establishes a secure <code>RTCDataChannel</code>.</li>
+<li>  Once connected, it registers a Service Worker (<code>sw.js</code>).</li>
+<li>  It then renders a full-screen <code>&lt;iframe&gt;</code> that reloads the requested URL.</li>
+</ul>
+<p>3.  <strong>The Service Worker Interceptor (<code>sw.js</code>):</strong></p>
+<p>The Service Worker runs in the background of the visitor's browser. Its job is to intercept *every single HTTP request* (images, CSS, API calls) made by the <code>&lt;iframe&gt;</code> (the actual website being viewed).</p>
+<ul>
+<li>  Instead of letting the browser fetch the asset from the internet, the Service Worker pauses the request.</li>
+<li>  It bundles the HTTP method, URL, and headers into a JSON object and sends it via <code>postMessage</code> to the App Shell.</li>
+</ul>
+<p>4.  <strong>Data Serialization & Transport:</strong></p>
+<p>The App Shell receives the intercepted request. If there is a request body (e.g., a form upload), it base64 encodes it. It formats the request into a string (e.g., <code>requestId|method|path|headersJSON|bodyStr</code>) and sends it across the internet directly to the phone via the WebRTC <code>RTCDataChannel</code>.</p>
+<p>5.  <strong>The Flutter Proxy (<code>WebRTCTunnelService</code>):</strong></p>
+<p>Inside the Flutter app, the <code>WebRTCTunnelService</code> listens to the WebRTC Data Channel.</p>
+<ul>
+<li>  It receives the custom formatted string from the browser.</li>
+<li>  It deserializes the string back into an HTTP Request.</li>
+<li>  It removes conflicting headers (like the <code>Host</code> header) and executes the request against the phone's internal <code>shelf</code> local server (<code>http://127.0.0.1:8080</code>).</li>
+<li>  The <code>shelf</code> server processes the request and returns the file/response.</li>
+<li>  <strong>Chunking:</strong> Because WebRTC data channels have a strict message size limit (typically 64KB), the Flutter app reads the HTTP response body in 64KB chunks.</li>
+<li>  It sends the response headers back over WebRTC, followed by binary messages containing the file chunks, marked with flags to indicate the final chunk.</li>
+</ul>
+<p>6.  <strong>Reassembly and Browser Delivery:</strong></p>
+<p>The App Shell in the browser receives the chunks, stitches the binary file back together, and passes it to the Service Worker. The Service Worker then completes the intercepted request, handing the final file over to the browser's rendering engine. To the end-user, it feels exactly like browsing a normal website, entirely unaware that the assets are being streamed P2P from a mobile device.</p>
+<p>---</p>
+<h2>3. Detailed File-by-File Analysis</h2>
+<h3>The Global Gateway</h3>
+<p>#### <code>worker.js</code> (Cloudflare Worker)</p>
+<p>This is the single entry point for external traffic. It serves two distinct roles based on the requested URL:</p>
+<ul>
+<li>  <strong>Service Worker Generator:</strong> If the path is <code>/sw.js</code>, it dynamically generates and serves the Service Worker script. This script utilizes the <code>FetchEvent</code> to intercept all network requests, sending them via <code>clients.matchAll()</code> back to the parent window (the App Shell).</li>
+<li>  <strong>App Shell Generator:</strong> For all other paths, it serves the main HTML file. This HTML file loads the Firebase JS SDK, manages the RTCPeerConnection, handles the complex logic of reassembling 64KB binary chunks received over WebRTC, and manages the invisible <code>&lt;iframe&gt;</code> where the actual website lives.</li>
+</ul>
+<h3>The Flutter Core (lib/core/)</h3>
+<p>#### <code>server_manager.dart</code></p>
+<p>This is the central "brain" of the application state. It extends <code>ChangeNotifier</code> so the UI can react to state changes.</p>
+<ul>
+<li>  <strong>Responsibilities:</strong> It initializes the <code>shelf</code> HTTP server, binds it to all IPv4 interfaces (<code>InternetAddress.anyIPv4</code>) on port 8080, and configures the static file handler pointing to the user-selected folder.</li>
+<li>  <strong>Integration:</strong> It wires together the <code>VisitorTracker</code> (adding a middleware pipeline to <code>shelf</code> to log requests) and initializes the <code>WebRTCTunnelService</code> if global access is enabled. It also interfaces with <code>PreferencesService</code> to load auto-start settings.</li>
+</ul>
+<p>#### <code>webrtc_tunnel_service.dart</code></p>
+<p>The most complex and vital component of the app's backend.</p>
+<ul>
+<li>  <strong>Signaling:</strong> It connects to the Firebase Realtime Database. It listens for incoming <code>offer</code> events from new visitors under the user's specific subdomain path. It replies with <code>answer</code> events and exchanges ICE candidates.</li>
+<li>  <strong>Proxy Logic:</strong> Once a WebRTC <code>RTCDataChannel</code> is open, it listens to the <code>onMessage</code> event. It parses the incoming string <code>requestId|method|path|headersJSON|body</code>, constructs an internal <code>http.Request</code>, and fires it at <code>127.0.0.1:8080</code>.</li>
+<li>  <strong>Binary Streaming:</strong> After getting the response from the local server, it implements a custom chunking protocol. It loops through the response byte array, extracting 64KB chunks, prepending a binary header (containing the Request ID length, the Request ID itself, and an <code>isLast</code> boolean flag), and pushes it over the WebRTC channel.</li>
+</ul>
+<p>#### <code>network_utils.dart</code></p>
+<p>A utility class dedicated to discovering the phone's Local Area Network (LAN) IP address. It iterates through the device's network interfaces (looking for <code>wlan</code>, <code>en</code>, or <code>eth</code>), ignoring loopback addresses, to find the IPv4 address so the UI can display instructions for local Wi-Fi access.</p>
+<p>#### <code>visitor_tracker.dart</code></p>
+<p>A simple state management class (<code>ChangeNotifier</code>) that maintains a counter of unique visitors (currently basic, incrementing when <code>/</code> or <code>index.html</code> is requested) and keeps a rolling list of the last 50 HTTP requests (e.g., <code>GET /style.css</code>) to be displayed in the Dashboard UI logs.</p>
+<p>#### <code>preferences_service.dart</code></p>
+<p>A wrapper around the <code>shared_preferences</code> package. It provides asynchronous getter and setter methods to persist user configurations across app restarts, such as the selected website folder path, the chosen subdomain, and the auto-start/tunnel toggles.</p>
+<h3>The Application UI</h3>
+<p>#### <code>lib/main.dart</code></p>
+<p>The entry point of the Flutter application.</p>
+<ul>
+<li>  <strong>Setup:</strong> It ensures Flutter bindings are initialized, initializes Firebase (<code>Firebase.initializeApp()</code>), and loads local preferences.</li>
+<li>  <strong>State Provisioning:</strong> It sets up the <code>MultiProvider</code> architecture, injecting <code>VisitorTracker</code> and <code>ServerManager</code> into the widget tree so they can be accessed anywhere.</li>
+<li>  <strong>Theming:</strong> It defines the global Material 3 design language, setting the dark theme, the Deep Blue primary color (<code>#1565C0</code>), and the Cyan secondary accent (<code>#00BCD4</code>).</li>
+</ul>
+<p>#### <code>lib/features/dashboard/dashboard_screen.dart</code></p>
+<p>The primary and only screen of the application.</p>
+<ul>
+<li>  <strong>Interactivity:</strong> It utilizes <code>file_picker</code> and <code>permission_handler</code> to allow the user to grant storage access and select the directory they wish to host.</li>
+<li>  <strong>Controls:</strong> It provides toggle switches to start/stop the server and enable/disable the Global Tunnel. It includes a text field to set the public subdomain.</li>
+<li>  <strong>Data Visualization:</strong> It dynamically displays the local IP address, the public web address, server uptime, total visitor count, and a <code>ListView.builder</code> that renders the live scrolling log of incoming HTTP requests managed by the <code>VisitorTracker</code>. It also uses <code>qr_flutter</code> to generate a QR code for easy local access sharing.</li>
+</ul>
+
+        <a href="https://src.dtech-services.co.za" class="btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Visit Live Platform</a>
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Owami's Library — Dtech Collection | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for Owami's Library — Dtech Collection." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Owami's Library — Dtech Collection</h1>
+      <div class="subtext">Digital Resource Collection</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>Overview (For Everyone)</h2>
+<p><strong>What is it?</strong></p>
+<p>Owami's Library is a web-based e-book reader and library management application. It allows users to browse, search, organize, and read thousands of public domain books (primarily from Project Gutenberg) directly in their web browser without needing any extra software or apps.</p>
+<p><strong>What is it for?</strong></p>
+<p>It is designed to provide a seamless, beautiful, and distraction-free reading experience across both desktop and mobile devices. It offers features commonly found in premium reading apps, all running locally and directly in your browser.</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Vast Library:</strong> Browse books intuitively organized by genre.</li>
+<li><strong>Smart Search & Filtering:</strong> Quickly find books by title, author, or genre.</li>
+<li><strong>Personalization:</strong> Save books to "Read Later", mark as "Favorites", or organize them into custom "Collections".</li>
+<li><strong>Distraction-Free Reader:</strong> A dedicated reading mode with customizable fonts, text sizes, and themes (Light, Sepia, Dark).</li>
+<li><strong>Progress Tracking:</strong> The app automatically remembers where you left off. The "Continue Reading" section shows your exact page and percentage.</li>
+<li><strong>Reading Stats:</strong> Tracks your time spent reading, pages turned, and books opened.</li>
+<li><strong>Offline & Cache Support:</strong> Loads significantly faster on subsequent visits by caching library data directly on your device.</li>
+<li><strong>Download Capability:</strong> Save books directly to your device as text files.</li>
+<li><strong>Access Control (Gatekeeper):</strong> A fun, secret entry system distinguishing between "Owami" and "Guest" users. Guest users see a mock ad delay before downloading, while the authorized user gets instant access.</li>
+</ul>
+<p><strong>How does it work?</strong></p>
+<p>When you open the site, it downloads a catalog of books. You can click on any book to open the reader. The reader fetches the book's text from the internet on-the-fly, formats it into "pages", and lets you read it like a real book. Everything you save—your favorites, your reading progress, your settings—is stored locally on your device, ensuring total privacy and speed.</p>
+<p>---</p>
+<h2>Technical Architecture & Deep Dive (For Developers)</h2>
+<p>Owami's Library is a static Single Page Application (SPA) conceptually spread across two HTML pages (<code>index.html</code> for the library, <code>reader.html</code> for reading), backed by a serverless Cloudflare Worker (<code>worker.js</code>) acting as a CORS proxy.</p>
+<h3>System Flow & State Management</h3>
+<ul>
+<li><strong>Frontend Framework:</strong> Vanilla HTML, CSS, and JavaScript. No heavy frameworks (like React or Vue) are used, ensuring maximum performance, rapid load times, and a minimal footprint.</li>
+<li><strong>Data Source:</strong> The book catalog is loaded from a static <code>data.txt</code> file, which contains text-based metadata (title, author, genre, text URL, cover image URL) that is parsed on the client side.</li>
+<li><strong>State Management:</strong></li>
+<li><code>localStorage</code>: Used for persisting user preferences (theme, font settings), user state (Guest vs Owami), library collections (Favorites, Read Later, Custom Collections), and reading progress (last page, total pages, timestamps).</li>
+<li><code>IndexedDB</code>: Used for caching the large book catalog (<code>data.txt</code> parsed into an array of JSON objects) to prevent re-fetching and re-parsing a large text file on every visit.</li>
+<li><strong>Proxying & CORS:</strong> Web browsers block fetching cross-origin text files directly (like fetching Gutenberg plain text files from another domain) due to security policies. To solve this, the app uses a Cloudflare Worker (<code>worker.js</code>). The frontend asks the Worker for the book URL, and the Worker fetches it from the source and returns it to the frontend with the proper <code>Access-Control-Allow-Origin: *</code> headers.</li>
+<li><strong>Pagination Algorithm:</strong> In <code>reader.html</code>, raw plain text from Gutenberg is stripped of boilerplate and split into "pages" dynamically based on a fixed word count. This creates a paginated, book-like feel instead of an endless scrolling text wall.</li>
+</ul>
+<p>---</p>
+<h2>File Breakdown</h2>
+<h3>1. `index.html` (The Library View)</h3>
+<p><strong>Role:</strong> The main hub for browsing, searching, and managing the library.</p>
+<p><strong>Key Components & Logic:</strong></p>
+<ul>
+<li><strong>UI & Layout:</strong></li>
+<li>A responsive CSS Grid/Flexbox layout.</li>
+<li>Desktop view uses a top navigation bar with tabs.</li>
+<li>Mobile view (&lt; 768px) hides the top tabs and displays a fixed bottom navigation bar for better ergonomics.</li>
+<li>Styled with a strict "Dtech x Owami" theme utilizing CSS variables (deep blacks, tech blues, and highlight pinks).</li>
+<li><strong>Tab Navigation (SPA-like routing):</strong> JavaScript functions hide and show different section <code>div</code>s (<code>#homeSection</code>, <code>#continueSection</code>, etc.) based on the active tab without ever reloading the page.</li>
+<li><strong>Data Loading (<code>loadBooks</code>):</strong></li>
+<li>Attempts to load the parsed book array from <code>IndexedDB</code> first.</li>
+<li>If empty or forced to refresh, it fetches <code>data.txt</code> via the Streams API to show a real-time loading progress bar.</li>
+<li>Data is processed in chunks (<code>processDataChunk</code>) to avoid locking the UI thread. It uses regex to extract book details, pushes them to an array, and finally saves the result to <code>IndexedDB</code>.</li>
+<li><strong>Search & Filter:</strong> Implements a debounced search listener to filter the loaded array of objects by title, author, and genre efficiently.</li>
+<li><strong>Gatekeeper Modal:</strong> An initial modal forcing users to identify themselves. Holding the background triggers a transition, and double-tapping sets the user state in local storage to "owami", altering the branding and bypassing ad timers for downloads.</li>
+<li><strong>Collections Management:</strong> Functions to create, update, and delete arrays of book objects saved to <code>localStorage</code> under keys like <code>gutenberg:readlater</code>, <code>gutenberg:favorites</code>, and <code>gutenberg:collections</code>.</li>
+<li><strong>Download Handling:</strong> Guests clicking download face a fake 5-second ad timer modal. "Owami" bypasses this. Downloads trigger the Cloudflare Worker to fetch the file, convert it to a Blob, and trigger a local browser download via an ephemeral object URL.</li>
+</ul>
+<h3>2. `reader.html` (The Reader View)</h3>
+<p><strong>Role:</strong> The isolated, distraction-free reading environment. Opened via URL parameters passed from <code>index.html</code> (e.g., <code>reader.html?url=...&title=...</code>).</p>
+<p><strong>Key Components & Logic:</strong></p>
+<ul>
+<li><strong>URL Parameter Parsing:</strong> On initialization, it reads <code>window.location.search</code> to know which book text URL to fetch and what metadata to display.</li>
+<li><strong>Fetching Text:</strong> Calls the <code>worker.js</code> proxy with the book's URL.</li>
+<li><strong>Text Processing & Pagination (<code>extractPlainText</code> & <code>paginateText</code>):</strong></li>
+<li><code>extractPlainText</code>: Uses string manipulation and indexOf checks to strip out standard Project Gutenberg headers, footers, and license text to isolate the actual story.</li>
+<li><code>paginateText</code>: Splits the cleaned text into arrays of paragraphs, grouping them into "pages" based on an approximate word count limit (<code>WORDS_PER_PAGE_DEFAULT</code>).</li>
+<li><strong>Rendering & Progress:</strong></li>
+<li>Displays the current index of the <code>pages</code> array by injecting HTML into the DOM.</li>
+<li>Saves the current index to <code>localStorage</code> (<code>gutenberg:lastpage:&lt;url&gt;</code>) every time the page turns.</li>
+<li><strong>Navigation:</strong> Supports clicking side hitboxes, swiping horizontally on touch devices, and using keyboard arrow keys.</li>
+<li><strong>Settings Panel:</strong> Allows toggling CSS classes on the <code>&lt;body&gt;</code> and <code>#app</code> container to change themes (Light, Sepia, Dark) and typography (Serif, Sans, Mono). Font size increments/decrements adjust the inline style of the text container.</li>
+<li><strong>Stats Tracking:</strong> Periodically increments <code>totalTime</code> in <code>localStorage</code> while the document visibility state is 'visible'.</li>
+</ul>
+<h3>3. `worker.js` (The Cloudflare Worker Proxy)</h3>
+<p><strong>Role:</strong> The backend proxy to bypass browser CORS restrictions and optionally cache responses at the edge.</p>
+<p><strong>Key Components & Logic:</strong></p>
+<ul>
+<li><strong>Event Listener:</strong> Intercepts incoming <code>fetch</code> events deployed on Cloudflare.</li>
+<li><strong>Authentication:</strong> Requires a specific <code>key</code> query parameter (<code>dtech_secret</code>) to prevent public abuse of the proxy endpoint.</li>
+<li><strong>CORS Handling:</strong> Responds to <code>OPTIONS</code> preflight requests immediately with standard CORS headers. Appends <code>Access-Control-Allow-Origin: *</code> to successful GET responses.</li>
+<li><strong>Size Limitation:</strong> Checks the <code>Content-Length</code> header and array buffer byte length, rejecting files larger than 5MB to prevent memory exhaustion or bandwidth abuse.</li>
+<li><strong>Edge Caching:</strong> Checks the Cloudflare Cache API (<code>caches.default</code>) before fetching from the upstream target. If fetched successfully, it stores the response in the cache with a TTL of 1 day (<code>86400</code> seconds), ensuring repeated reads of the same book are lightning fast globally.</li>
+</ul>
+<h3>4. `data.txt`</h3>
+<p><strong>Role:</strong> The static database file containing the catalog of books.</p>
+<p><strong>Structure:</strong></p>
+<p>The file follows a specific, human-readable text format parsed by regex chunking in <code>index.html</code>:</p>
+<pre><code>
+🎯 GENRE: Fiction
+📖 BOOK 1: A Tale of Two Cities
+👤 Author: Charles Dickens
+📝 Text URL: https://www.gutenberg.org/files/98/98-0.txt
+🖼️ Cover: https://www.gutenberg.org/cache/epub/98/pg98.cover.medium.jpg
+------------------------
+</code></pre>
+<p>This simple format allows for easy manual updates while remaining machine-readable for the frontend parser.</p>
+<p>---</p>
+<h2>Request Flow Summary</h2>
+<p>1. <strong>Initial Load:</strong> User hits <code>index.html</code>.</p>
+<p>2. <strong>Catalog Fetch:</strong> <code>index.html</code> checks <code>IndexedDB</code>. If empty, it fetches <code>data.txt</code> directly from the same host, parses it, and populates the UI and cache.</p>
+<p>3. <strong>Open Book:</strong> User clicks "Read". Browser navigates to <code>reader.html?url=&lt;Gutenberg_URL&gt;</code>.</p>
+<p>4. <strong>Proxy Fetch:</strong> <code>reader.html</code> sends <code>fetch('https://silent-brook.../?url=&lt;Gutenberg_URL&gt;&key=dtech_secret')</code>.</p>
+<p>5. <strong>Worker Proxy:</strong> <code>worker.js</code> receives the request. Checks its edge cache. If miss, fetches <code>&lt;Gutenberg_URL&gt;</code>.</p>
+<p>6. <strong>Worker Response:</strong> Worker attaches CORS headers, caches the response, and returns the text to <code>reader.html</code>.</p>
+<p>7. <strong>Process & Render:</strong> <code>reader.html</code> strips boilerplate headers, chunks the large text string into pages, retrieves any saved page index from <code>localStorage</code>, and displays the content to the user.</p>
+
+
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>

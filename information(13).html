@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DTech Rewards Platform    ation | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for DTech Rewards Platform    ation." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DTech Rewards Platform    ation</h1>
+      <div class="subtext">Student Incentive Program</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>1. System Overview</h2>
+<p><strong>What it is:</strong></p>
+<p>The DTech Rewards Platform is a digital ecosystem where users can earn points by engaging with advertisements (monetized links) and subsequently redeem those points for real-world rewards like Airtime, Vouchers, or Capitec bank transfers.</p>
+<p><strong>What it's for:</strong></p>
+<p>It serves as an ad-revenue sharing platform. The administrators generate revenue from ad impressions/clicks via third-party ad networks (like Monetag and direct link providers), and a portion of that value is distributed back to the users in the form of "points." (The internal economy is scaled such that 100 points = R1).</p>
+<p><strong>How it works (The User Journey):</strong></p>
+<p>1. <strong>Registration & Login:</strong> Users create an account and log in via the web portal or the dedicated Android app.</p>
+<p>2. <strong>Earning Points:</strong> Users navigate to the "Berserker" page and click on ads. The system tracks these ad interactions.</p>
+<p>3. <strong>Synchronization:</strong> As users watch ads, points are accumulated locally on their device. When they return to the dashboard, these pending points are securely synced to the backend database.</p>
+<p>4. <strong>Withdrawal:</strong> Once enough points are accumulated (e.g., 1000 points for Airtime), users can submit a withdrawal request.</p>
+<p>5. <strong>Administration:</strong> System admins use a hidden admin console to review withdrawal requests, process them, and manage (ban/delete/edit) users.</p>
+<p>---</p>
+<h2>2. System Architecture</h2>
+<p>The system follows a modern, serverless architecture split into three main components:</p>
+<h3>A. The Web Frontend (HTML/CSS/JS)</h3>
+<p>A collection of vanilla HTML files hosted on a web server (e.g., <code>revenue.dtech-services.co.za</code>). It provides the User Interface (UI). It uses standard browser features like <code>localStorage</code> for session management (storing the username and a token) and <code>document.cookie</code> to communicate with the Android App layer.</p>
+<h3>B. The Native Android App (Kotlin/WebView)</h3>
+<p>An Android application (<code>android_app/</code>) that acts as a dedicated, specialized browser for the Web Frontend. It wraps the website in a <code>WebView</code>.</p>
+<p><strong>Why have an app?</strong></p>
+<ul>
+<li>It injects a secret security header (<code>User-Agent: DTechApp-Secret-9f8d7b6a</code>) into network requests, preventing users from spoofing point sync requests from standard desktop browsers.</li>
+<li>It intercepts URL loading to detect when a user clicks an external ad link vs. an internal page.</li>
+<li>It handles multiple windows (popups) natively, tracking when an ad popup is opened and closed, rewarding the user with a "pending point" via a Cookie (<code>pending_navigation_points</code>) upon return.</li>
+</ul>
+<h3>C. The Backend API (Cloudflare Worker & KV)</h3>
+<p>A serverless edge function (<code>worker.js</code>) hosted on Cloudflare Workers. It acts as the entire backend logic and database layer.</p>
+<ul>
+<li><strong>Compute:</strong> It processes HTTP requests, validates tokens, hashes passwords, and handles the business logic.</li>
+<li><strong>Storage:</strong> It uses Cloudflare KV (Key-Value storage) as its database. Data is stored under keys (like the username), with values being JSON strings representing the user's data or system lists (like <code>SYSTEM:WITHDRAWALS</code>).</li>
+</ul>
+<p>---</p>
+<h2>3. Detailed File Breakdown</h2>
+<h3>Frontend Web Files</h3>
+<p>#### <code>index.html</code> (Authentication Gateway)</p>
+<ul>
+<li><strong>Purpose:</strong> The landing page handling User Registration and Login.</li>
+<li><strong>How it works:</strong> Contains HTML forms for username and password. On submit, JavaScript intercepts the action, sends a <code>POST</code> request to the backend <code>/login</code> or <code>/register</code> endpoints. If login is successful, it receives a secure <code>token</code> from the server, saves it to the browser's <code>localStorage</code> (key: <code>dtech_user</code>), and redirects to <code>dashboard.html</code>.</li>
+</ul>
+<p>#### <code>dashboard.html</code> (Main Hub & Sync Engine)</p>
+<ul>
+<li><strong>Purpose:</strong> The central navigation hub for the user and the critical engine for syncing earned points.</li>
+<li><strong>How it works:</strong></li>
+</ul>
+<p>1. Checks <code>localStorage</code> to ensure the user is logged in.</p>
+<p>2. <strong>The Sync Mechanism:</strong> It reads the <code>pending_navigation_points</code> cookie (set by the Android app when an ad is watched) and any <code>dtech_pending_points</code> from <code>localStorage</code>.</p>
+<p>3. If pending points exist, it converts them into randomly generated values (e.g., 1 ad watch = a random number of points between 1 and 30).</p>
+<p>4. It batches these points and sends a single <code>POST</code> request to <code>/sync-points</code>.</p>
+<p>5. Upon success, it clears the cookie and local storage, ensuring points aren't duplicated.</p>
+<p>#### <code>berserker.html</code> (The Earning Arena)</p>
+<ul>
+<li><strong>Purpose:</strong> The specific page where users interact with ads to earn points.</li>
+<li><strong>How it works:</strong> Features a prominent "Watch Ad" button. When clicked, it opens a third-party ad URL (e.g., <code>https://otieu.com/...</code>) in a new tab/popup. The underlying logic relies on the Android App (or browser tracking) to monitor this exit and return, which triggers the point allocation process.</li>
+</ul>
+<p>#### <code>profile.html</code> (User Status)</p>
+<ul>
+<li><strong>Purpose:</strong> Displays the user's current point balance and their historical withdrawal requests.</li>
+<li><strong>How it works:</strong> Makes <code>GET</code> requests to <code>/user</code> to fetch the current live balance from the server, and <code>/withdrawals</code> to fetch the user's specific history. It renders these in a table format.</li>
+</ul>
+<p>#### <code>withdraw.html</code> (Redemption Interface)</p>
+<ul>
+<li><strong>Purpose:</strong> Allows users to convert points to real-world value.</li>
+<li><strong>How it works:</strong> Contains a form where users select a method (Airtime, Voucher, Capitec) and an amount based on predefined tiers. It dynamically updates the required input fields (e.g., asking for a phone number for Airtime, or an account number for Capitec). It sends a <code>POST</code> request to <code>/withdraw</code>, which deducts the points and logs the request for admins.</li>
+</ul>
+<p>#### <code>admin.html</code> (The Control Panel)</p>
+<ul>
+<li><strong>Purpose:</strong> A hidden, unlinked dashboard for system administrators.</li>
+<li><strong>How it works:</strong> Secured strictly by a frontend Javascript prompt asking for an Admin Secret (e.g., a password). This secret is passed in the headers (<code>X-Admin-Secret</code>) of every API call. It allows admins to view all users, edit balances, ban/delete users, and mark withdrawal requests as "paid".</li>
+</ul>
+<p>---</p>
+<h3>Android App Files</h3>
+<p>#### <code>MainActivity.kt</code> (The Core Engine)</p>
+<ul>
+<li><strong>Location:</strong> <code>android_app/src/main/java/com/dtech/rewards/MainActivity.kt</code></li>
+<li><strong>Purpose:</strong> The main activity that drives the entire mobile experience.</li>
+<li><strong>How it works:</strong></li>
+<li><strong>Setup:</strong> Initializes a <code>WebView</code>, enabling JavaScript, DOM storage, and multiple windows. Crucially, it appends <code>DTechApp-Secret-9f8d7b6a</code> to the <code>User-Agent</code>.</li>
+<li><strong>Navigation Tracking (<code>MyWebViewClient</code>):</strong> Overrides <code>onPageStarted</code>. It checks if the URL being loaded is an internal domain (<code>revenue.dtech-services.co.za</code>) or an external ad. If the user leaves the internal <code>berserker.html</code> page for an external page, it flags an <code>isExternalSessionActive</code>.</li>
+<li><strong>Popup Handling (<code>MyWebChromeClient</code>):</strong> Handles <code>onCreateWindow</code> (when an ad opens a popup) and <code>onCloseWindow</code>. When a popup is closed and the user returns, it calls <code>addPendingPoint()</code>.</li>
+<li><strong>Cookie Communication:</strong> <code>addPendingPoint()</code> increments a counter in Android's <code>SharedPreferences</code> and immediately writes this value to the browser's <code>CookieManager</code> as <code>pending_navigation_points</code>. This is how the Android app tells the HTML <code>dashboard.html</code> that an ad was successfully watched.</li>
+</ul>
+<p>#### <code>AndroidManifest.xml</code></p>
+<ul>
+<li><strong>Location:</strong> <code>android_app/src/main/AndroidManifest.xml</code></li>
+<li><strong>Purpose:</strong> Defines app permissions (Internet access) and registers <code>MainActivity</code> and <code>MyFirebaseMessagingService</code> (for push notifications).</li>
+</ul>
+<p>---</p>
+<h2>4. Comprehensive API Guide (worker.js)</h2>
+<p>The backend is hosted on Cloudflare Workers (<code>https://crimson-art-f482.lefa4082.workers.dev</code>). All endpoints return standard HTTP status codes (200 OK, 400 Bad Request, etc.) and JSON payloads.</p>
+<h3>Global Security & CORS</h3>
+<ul>
+<li><code>getCorsHeaders()</code>: Ensures only allowed domains (<code>*.dtech-services.co.za</code>, <code>*.preasx24.co.za</code>) can interact with the API. It handles preflight <code>OPTIONS</code> requests automatically.</li>
+</ul>
+<h3>User Endpoints</h3>
+<p>#### 1. <code>POST /register</code></p>
+<ul>
+<li><strong>Purpose:</strong> Creates a new user account.</li>
+<li><strong>Request Payload (JSON):</strong> <code>{"username": "johndoe", "password": "secretpassword", "email": "...", "whatsapp": "..."}</code></li>
+<li><strong>Logic:</strong> Checks if the username exists in the KV store. If not, it hashes the password using SHA-256 (<code>hashPassword()</code>), creates a user object with 0 points and 'active' status, and saves it to the KV store. It also appends the username to the <code>SYSTEM:USER_LIST</code> array.</li>
+<li><strong>Response:</strong> <code>201 Created</code> on success, <code>409 Conflict</code> if user exists.</li>
+</ul>
+<p>#### 2. <code>POST /login</code></p>
+<ul>
+<li><strong>Purpose:</strong> Authenticates a user and issues a session token.</li>
+<li><strong>Request Payload (JSON):</strong> <code>{"username": "johndoe", "password": "secretpassword"}</code></li>
+<li><strong>Logic:</strong> Fetches the user from KV. Hashes the input password and compares it to the stored hash. (It includes a legacy migration check for unhashed passwords). If successful and the user is not banned, it generates a <code>crypto.randomUUID()</code> token, saves it to the user object in KV, and returns it.</li>
+<li><strong>Response (JSON):</strong> <code>{"message": "Login successful", "points": 100, "token": "uuid-string", "username": "johndoe"}</code></li>
+</ul>
+<p>#### 3. <code>GET /user?username={username}</code></p>
+<ul>
+<li><strong>Purpose:</strong> Retrieves the current point balance for a user.</li>
+<li><strong>Query Params:</strong> <code>username</code></li>
+<li><strong>Logic:</strong> Fetches the user from KV, ensures they aren't banned, and returns their points.</li>
+<li><strong>Response (JSON):</strong> <code>{"username": "johndoe", "points": 1500}</code></li>
+</ul>
+<p>#### 4. <code>POST /sync-points</code></p>
+<ul>
+<li><strong>Purpose:</strong> The most critical and secure endpoint. Adds points to a user's balance.</li>
+<li><strong>Security:</strong> Requires the <code>User-Agent</code> header to contain <code>DTechApp-Secret-9f8d7b6a</code>. This enforces that points can only be synced from the official Android App, preventing users from running scripts on their desktop browsers to artificially inflate points. Also requires the valid session <code>token</code>.</li>
+<li><strong>Request Payload (JSON):</strong> <code>{"username": "johndoe", "token": "uuid-string", "points": 45}</code></li>
+<li><strong>Logic:</strong> Validates the user exists, isn't banned, and the token matches. It then adds the requested points to the user's total and saves back to KV.</li>
+<li><strong>Response (JSON):</strong> <code>{"message": "Points synced successfully", "points": 1545, "added": 45}</code></li>
+</ul>
+<p>#### 5. <code>POST /withdraw</code></p>
+<ul>
+<li><strong>Purpose:</strong> Submits a request to redeem points for a reward.</li>
+<li><strong>Request Payload (JSON):</strong> <code>{"username": "johndoe", "token": "uuid", "points": 1000, "amount": 10, "method": "Airtime", "details": {"network": "Vodacom", "phone": "0812345678"}}</code></li>
+<li><strong>Logic:</strong> Validates all fields are present and numeric fields are valid numbers. Checks if the user has enough points. If valid, it deducts the points from the user's balance, generates a unique withdrawal ID, and saves the request to the <code>SYSTEM:WITHDRAWALS</code> array in KV with a status of 'pending'.</li>
+<li><strong>Response:</strong> <code>200 OK</code> on success, <code>400 Bad Request</code> if insufficient points.</li>
+</ul>
+<p>#### 6. <code>GET /withdrawals?username={username}</code></p>
+<ul>
+<li><strong>Purpose:</strong> Gets a specific user's withdrawal history.</li>
+<li><strong>Logic:</strong> Fetches the global <code>SYSTEM:WITHDRAWALS</code> array and filters it by the provided username.</li>
+</ul>
+<p>---</p>
+<h3>Admin Endpoints</h3>
+<p>All admin endpoints require the custom header <code>X-Admin-Secret: {secret}</code>. The backend compares this header against its environment variable <code>env.ADMIN_SECRET</code>.</p>
+<p>#### 7. <code>GET /admin/users</code></p>
+<ul>
+<li><strong>Purpose:</strong> Lists all users in the system.</li>
+<li><strong>Logic:</strong> Iterates through <code>SYSTEM:USER_LIST</code>, fetches each user's KV record, and returns a summarized array (username, points, ban status).</li>
+</ul>
+<p>#### 8. <code>POST /admin/action</code></p>
+<ul>
+<li><strong>Purpose:</strong> Perform actions on users (Ban, Unban, Edit Balance, Delete).</li>
+<li><strong>Request Payload (JSON):</strong> <code>{"username": "johndoe", "action": "ban|unban|edit_balance|delete", "value": "optional-value"}</code></li>
+<li><strong>Logic:</strong> Fetches the user, applies the requested modification, and saves it. If 'delete', removes the user from KV and the <code>SYSTEM:USER_LIST</code>.</li>
+</ul>
+<p>#### 9. <code>GET /admin/withdrawals</code></p>
+<ul>
+<li><strong>Purpose:</strong> Lists all withdrawal requests system-wide.</li>
+<li><strong>Logic:</strong> Fetches <code>SYSTEM:WITHDRAWALS</code> and sorts them by timestamp (newest first).</li>
+</ul>
+<p>#### 10. <code>POST /admin/withdrawal-action</code></p>
+<ul>
+<li><strong>Purpose:</strong> Updates the status of a withdrawal request.</li>
+<li><strong>Request Payload (JSON):</strong> <code>{"id": "withdrawal-uuid", "action": "paid"}</code></li>
+<li><strong>Logic:</strong> Finds the specific withdrawal in <code>SYSTEM:WITHDRAWALS</code> by ID, updates its status to 'paid', and saves the array back to KV.</li>
+</ul>
+
+        <a href="https://revenue.dtech-services.co.za" class="btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Visit Live Platform</a>
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>

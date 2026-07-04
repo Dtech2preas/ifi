@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>: DTECH High School Learning Portal (Preasx24) | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for : DTECH High School Learning Portal (Preasx24)." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>: DTECH High School Learning Portal (Preasx24)</h1>
+      <div class="subtext">Past Papers & Study Hub</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>1. Overview & Purpose</h2>
+<p>The <strong>DTECH High School Learning Portal (Preasx24)</strong> is a static educational ecosystem created by Seakwa Jonas Mochebane. Its primary purpose is to provide South African high school students with offline and low-data access to essential academic resources, including past examination papers, study guides, school-based assessment (SBA) materials, Practical Assessment Tasks (PATs), quizzes, and information regarding universities and NSFAS (National Student Financial Aid Scheme).</p>
+<p>The platform is designed with accessibility in mind, heavily utilizing static files (HTML, CSS, JS, JSON) ensuring it functions efficiently even in low-connectivity environments. The branding consistently features the "DTECH" moniker and "Empowering the Youth Through Digital Innovation."</p>
+<h2>2. Architecture & Data Flow</h2>
+<p>The architecture of the website is entirely <strong>serverless and front-end driven</strong>.</p>
+<ul>
+<li><strong>Frontend Stack:</strong> HTML5, CSS3 (with custom variables and keyframe animations), and Vanilla JavaScript. Tailwind CSS is utilized on the index page via CDN.</li>
+<li><strong>Data Storage:</strong> Content is strictly stored in local <code>.json</code> files. These files act as simple databases.</li>
+<li><strong>Data Flow (Requests):</strong> When a user navigates to a specific page (e.g., <code>past-papers.html</code>), JavaScript executes an asynchronous <code>fetch()</code> request to retrieve the corresponding JSON file (e.g., <code>papers.json</code>). The JSON array is parsed, and the DOM is dynamically manipulated using <code>document.createElement()</code> or <code>innerHTML</code> to render the content (cards, buttons, dropdown options) onto the screen.</li>
+<li><strong>Interactivity:</strong> Many pages include filtering mechanisms (like searching past papers by year or subject) which are handled purely client-side using JavaScript <code>Array.prototype.filter()</code>.</li>
+<li><strong>Ads & Tracking:</strong> The system incorporates ad networks (like <code>cafewarriors</code>, <code>admaven</code>, <code>monetag</code>) and tracking mechanisms (like GoatCounter) to monetize downloads and monitor traffic. Often, "Download" buttons are configured to trigger ad popups alongside or before the actual file download.</li>
+</ul>
+<h2>3. File-by-File Breakdown</h2>
+<h3>3.1. Main Entry & Navigation</h3>
+<ul>
+<li><strong><code>index.html</code>:</strong> The core hub of the ecosystem. It presents a grid of buttons leading to various sections (Past Papers, Study Guides, Vid & Audio, SBA Guide, PATs, Eligibility, Quizzes, NSFAS Info, University, Notes, and Daily Quiz). It includes extensive metadata for SEO and structured data for organization and author profiling.</li>
+<li><strong><code>style.css</code>:</strong> The primary stylesheet for the DTECH aesthetic. It defines the dark theme, glassmorphism effects (<code>--glass-bg</code>, <code>--glass-border</code>), glowing buttons, and key animations (like <code>fadeInUp</code>, <code>glowPulse</code>) used heavily in the quiz hubs (<code>quizes.html</code>, <code>dtechh.html</code>).</li>
+<li><strong><code>script.js</code>:</strong> The logic driver for the "Daily Quiz & Quote" (<code>dtechh.html</code>). It handles stage progression (Quiz -&gt; Quote -&gt; Video), checks answers, dynamically injects Google Drive video iframes, and uses <code>localStorage</code> to track the user's progress across days.</li>
+</ul>
+<h3>3.2. Core Content Pages</h3>
+<ul>
+<li><strong><code>past-papers.html</code>:</strong> Fetches <code>papers.json</code>. Renders a filterable list of past exam papers from 2009-2024. Allows filtering by subject, month, and year. Downloads trigger an external URL open.</li>
+<li><strong><code>study-guides.html</code>:</strong> Fetches <code>guide.json</code>. Renders a list of study guide PDFs with direct download links.</li>
+<li><strong><code>learner-guide.html</code>:</strong> Fetches <code>a.json</code>. Renders links to video and audio lessons.</li>
+<li><strong><code>sba.html</code>:</strong> Fetches <code>SBA.json</code>. Displays School Based Assessment documents.</li>
+<li><strong><code>pats.html</code>:</strong> Fetches <code>PAT.json</code>. Displays Practical Assessment Task guides.</li>
+<li><strong><code>nsfas.html</code>:</strong> A static informational page providing a comprehensive guide to applying for NSFAS, including dates, criteria, allowances, and contact info. It includes a custom Cloudflare worker script for page view counting.</li>
+<li><strong><code>university-applications.html</code>:</strong> Fetches <code>data.json</code>. Displays a dynamic list of universities. Clicking a university card expands it to show details like application dates, faculties, NSFAS acceptance, map links, and social media.</li>
+<li><strong><code>note.html</code>:</strong> A "Smart Notes" application. Allows students to select a subject and write their own notes using a rich text editor (with highlighting, titles, and definitions). Data is saved locally using <code>localStorage</code>. It includes a feature to generate and download the notes as a PDF using <code>html2pdf.js</code>.</li>
+</ul>
+<h3>3.3. The Quiz Ecosystem</h3>
+<ul>
+<li><strong><code>quizes.html</code>:</strong> The hub for subject-specific quizzes. Provides links to subjects like Physical Science, Mathematics, Life Sciences, etc.</li>
+<li><strong>Subject Hubs (<code>physical-science.html</code>, <code>mathematics.html</code>, <code>life-sciences.html</code>, <code>history.html</code>, <code>business-studies.html</code>, <code>mathsli.html</code>):</strong> These pages present terms or papers for the specific subject, linking to individual quiz tests.</li>
+<li><strong>Quiz Test Pages (e.g., <code>mathpp1-term1.html</code>, <code>ls-p1-opt1.html</code>, <code>chemistry-term1.html</code>):</strong> These are the actual test environments.</li>
+<li>They fetch specific JSON files from the <code>quizzes/</code> directory (e.g., <code>quizzes/mathpp1term1.json</code>).</li>
+<li>They feature a dynamic question UI, a toggle between 30 and 50 question modes, and score calculation.</li>
+<li>Upon completion, they generate an interactive review of right/wrong answers.</li>
+<li>They utilize <code>jspdf</code> to dynamically generate a stylized "D-TECH Certificate of Achievement" PDF for the user to download with their score.</li>
+</ul>
+<h3>3.4. Daily Challenge Page</h3>
+<ul>
+<li><strong><code>dtechh.html</code>:</strong> The "Daily Quiz & Quote" feature linked from <code>index.html</code>. It works directly with <code>script.js</code> to cycle through 3 stages: a daily question (from <code>questions.json</code>), a daily quote (from <code>quotes.json</code>), and a daily video (from <code>videos.json</code>).</li>
+</ul>
+<h3>3.5. JSON Data Stores</h3>
+<ul>
+<li><strong><code>papers.json</code></strong>: An array of objects <code>{"name": "...", "file": "url"}</code> containing links to past papers.</li>
+<li><strong><code>guide.json</code></strong>: Links for study guides.</li>
+<li><strong><code>SBA.json</code></strong>: Links for SBA materials.</li>
+<li><strong><code>PAT.json</code></strong>: Links for Practical Assessment Tasks.</li>
+<li><strong><code>data.json</code></strong>: Complex objects detailing University information (motto, dates, fees, faculties, links).</li>
+<li><strong><code>a.json</code>, <code>b.json</code>, <code>e.json</code>, <code>m.json</code>, <code>p.json</code> etc.:</strong> Smaller data lists serving links for specific subjects/categories.</li>
+<li><strong><code>questions.json</code>, <code>quotes.json</code>, <code>videos.json</code></strong>: Content arrays feeding the daily <code>dtechh.html</code> challenge.</li>
+<li><strong><code>quizzes/*.json</code></strong>: Arrays containing multiple-choice questions for the quiz testing engine. Format: <code>{"question": "...", "correct_answer": "...", "incorrect_answers": [...]}</code>.</li>
+</ul>
+<h2>4. Summary</h2>
+<p>The DTECH Learning Portal is a highly cohesive, client-side application. It relies on fetching localized JSON structures to populate a stylized, gamified, and offline-capable interface, prioritizing educational accessibility and student engagement via integrated quizzes and comprehensive resource tracking.</p>
+
+        <a href="https://grade12.dtech-services.co.za" class="btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Visit Live Platform</a>
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>
