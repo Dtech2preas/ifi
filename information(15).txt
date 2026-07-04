@@ -1,0 +1,84 @@
+# System Analysis: DTECH Apps Store
+
+## 1. Overview
+- **What it is**: A static, Single Page Application (SPA) website functioning as a custom App Store for downloading Android applications (APK files) created by DTECH.
+- **What it's for**: Providing a fast, user-friendly, responsive interface for users to discover, view details, and download DTECH applications directly to their mobile devices or computers.
+- **Who it is for**: Both general users wanting to download apps (offering a streamlined UI) and developers looking to understand or maintain the system architecture (offering a simple, backend-free setup).
+
+## 2. Architecture & How it Works
+- **Static Hosting Architecture**: The system has no backend server or database. It is entirely composed of static files (HTML, CSS, JS) and static assets (images, APKs, JSON). This makes it perfectly suited for hosting platforms like GitHub Pages, Cloudflare Pages, or standard web servers.
+- **Single Page Application (SPA) Flow**: The entire application lives within a single HTML file (`index.html`). Different "views" (Homepage and App Details) are controlled via CSS classes (specifically the `.active` class). JavaScript handles the swapping of these views without requiring full page reloads, making the site feel fast and app-like.
+- **Data Loading & Discovery**: The system does not connect to an API or database. Instead, data is loaded via standard HTTP `fetch` requests targeting static JSON files (`details.json`) located in subdirectories for each app inside the `download/` folder.
+- **Asset Probing**: Images (like app icons and screenshots) are not hardcoded. The application proactively probes for various image formats (.png, .jpg, .jpeg, .webp) using `Image` object loading to determine if the assets exist.
+
+## 3. Detailed Request Explanations
+### Data Fetching (Network Requests)
+- JavaScript uses the `fetch()` API to asynchronously retrieve metadata from each app's `details.json` file.
+- The state variable `appsData` is populated using `Promise.all()`, which simultaneously fires off requests for a predefined array of folder names (`appFolders`).
+- **Error Handling**: If an app's `details.json` is missing or the request fails (e.g., a 404 error), the error is caught, and the app is simply omitted from the grid without crashing the rest of the application.
+
+### Image Discovery and Rendering
+- Because there is no backend server to list directory contents, the app uses a clever probing technique to find images.
+- **`checkImageExists(url)`**: This function attempts to load a given URL via an `Image` constructor (`new Image()`). It resolves a promise to `true` if the `onload` event fires, and `false` if `onerror` fires.
+- **`findExistingImage(basePath, name)`**: This loops through a list of possible extensions (`.png`, `.jpg`, `.jpeg`, `.webp`) and attempts to load them sequentially using `checkImageExists`.
+- **Screenshots Logic**: For screenshots, the script runs a loop from `pic1` up to a set maximum limit (e.g., 30). It tracks the last successfully loaded screenshot index and renders all screenshots up to that point. If a screenshot in the sequence is missing (e.g., `pic1` exists, `pic2` is missing, `pic3` exists), it renders a placeholder for the missing one, up to the highest found index.
+
+## 4. File-by-File Breakdown
+
+### `index.html`
+- **Purpose**: The main structural skeleton of the application.
+- **Sections**:
+  - `<head>`: Contains metadata, the title, and the link to `styles.css`.
+  - `<header>`: The sticky top navigation area showing the "DTECH Apps" branding.
+  - `<main>`: Contains the main content views.
+    - `#homepage`: A grid container (`#app-grid`) for injecting app preview cards dynamically.
+    - `#app-details`: A detailed view container showing the app icon, title, developer, version, description, a dynamic screenshot gallery (`#screenshots-gallery`), and dynamic sections (`#detail-dynamic-sections` for "What's New", "Key Features", etc.).
+  - `<footer>`: Simple copyright section.
+  - `#image-modal`: A full-screen hidden overlay for viewing screenshots or icons at a larger size.
+- **Functionality**: Serves as the DOM canvas. Empty containers are filled dynamically by JavaScript based on the fetched data.
+
+### `styles.css`
+- **Purpose**: The styling and layout engine.
+- **Design Language**: Implements the DTECH black and neon-blue (`#00e5ff`) modern theme.
+- **Key Features**:
+  - **CSS Variables**: Uses `:root` for centralized color management (e.g., `--primary-blue`, `--dark-bg`, `--card-bg`).
+  - **Responsiveness**: Mobile-first responsive design using flexbox and CSS grid (`.app-grid` with `auto-fill` and `minmax`).
+  - **SPA View Toggling**: Implements the view toggle by defaulting `.view` to `display: none;` and toggling `display: block;` when the `.active` class is applied.
+  - **Animations**: CSS animations (e.g., `@keyframes fadeIn`, modal zooming) for smooth user interactions.
+  - **UI Enhancements**: Custom scrollbar styling for the horizontal screenshot gallery, hover effects with box-shadows on buttons and app cards to provide tactile feedback.
+
+### `app.js`
+- **Purpose**: The core logic engine driving the SPA behavior, data fetching, and DOM manipulation.
+- **Core Variables**:
+  - `appFolders`: A hardcoded array of directory names (e.g., `'grade12_assist'`, `'music_app'`). This tells the script which folders to query within the `download/` directory.
+  - `appsData`: An array storing the successfully fetched metadata objects for each app.
+- **Key Functions**:
+  - `initApp()`: The main entry point on DOM content load. Sets up navigation listeners, triggers data loading, and renders the homepage.
+  - `loadAppsData()`: Maps over `appFolders` to fetch `details.json` for each folder. Uses `Promise.all()` to await all fetches. Also resolves the correct icon path for each app.
+  - `renderHomepage()`: Clears the `#app-grid`, iterates through `appsData`, and dynamically constructs HTML elements (`.app-card`) using template literals to display the app list.
+  - `showAppDetails(app)`:
+    - Injects data from a specific app object into the corresponding DOM elements of the `#app-details` view.
+    - Handles dynamic rendering of optional fields (`whatsNew`, `keyFeatures`, `permissions`, `tags`).
+    - Initiates the screenshot probing loop (up to 30 images) and renders them into the gallery.
+    - Updates the browser's document title and switches the active view.
+  - `showHomepage()`: Toggles CSS classes to hide details, show the homepage grid, and reset the document title.
+  - `openImageModal(src)`: Controls the display of the full-screen image viewer, setting the source of the modal image to the clicked image's source.
+
+## 5. Directory Structure (`download/`)
+- **Purpose**: The central storage location for all app-specific assets and metadata.
+- **Structure**: Each app has its own subfolder inside `download/` matching its folder identifier (e.g., `download/study_app/`).
+- **Conventions per App Folder**:
+  - `details.json`: Contains the application's metadata (name, version, descriptions, tags, category, developer, etc.). This schema is dynamic; optional arrays (like `keyFeatures` or `whatsNew`) are rendered if present.
+  - `[folder_name].apk`: The actual Android application package for download (e.g., `study_app.apk`). The system assumes the APK file name exactly matches the folder name.
+  - `icon.[ext]`: The app icon.
+  - `pic1.[ext]`, `pic2.[ext]`, etc.: The sequential screenshot images.
+- **Extension Flexibility**: Visual assets (icons, screenshots) can utilize `.png`, `.jpg`, `.jpeg`, or `.webp` formats. The frontend automatically determines which one exists.
+
+## 6. Deployment & Workflow Summary
+- **Adding a new app**:
+  1. Create a new folder in `download/` (e.g., `download/new_app/`).
+  2. Add the APK, named identically to the folder (`new_app.apk`).
+  3. Add `icon.[ext]` and screenshots (`pic1.[ext]`, `pic2.[ext]`, etc.).
+  4. Add a `details.json` containing the required metadata.
+  5. Edit `app.js` and add `'new_app'` to the `appFolders` array.
+- **Hosting**: Because it lacks a server-side dependency, the site relies entirely on client-side browser execution. It works perfectly on any static file host like GitHub Pages, Cloudflare Pages, AWS S3, or Nginx.
