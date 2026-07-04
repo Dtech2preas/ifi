@@ -1,0 +1,178 @@
+# D-TECH Student Information Hub - System Analysis
+
+## Table of Contents
+1. [Project Overview](#project-overview)
+2. [System Architecture & Request Flow](#system-architecture--request-flow)
+3. [Monetization & Ad Integrations](#monetization--ad-integrations)
+4. [File-by-File Analysis](#file-by-file-analysis)
+   - [index.html](#indexhtml)
+   - [ask.html](#askhtml)
+   - [thankyou.html](#thankyouhtml)
+   - [doc.html](#dochtml)
+   - [redirect.html](#redirecthtml)
+   - [term.html](#termhtml)
+   - [CNAME](#cname)
+5. [Conclusion](#conclusion)
+
+---
+
+## Project Overview
+
+**What is it?**
+The D-TECH Student Information Hub is a web-based portal designed to assist students of Nelson Mandela University (NMU). It acts as an independent resource center where students can find answers to frequently asked questions, download important academic documents (such as timetables and maps), and submit their own inquiries to a support team.
+
+**What is it for?**
+The primary purpose of the website is to streamline the dissemination of information for NMU students, providing quick access to guides covering orientation, NSFAS (financial aid), accommodation, and course changes. It is a student-led initiative, completely independent of the university itself.
+
+**How does it work?**
+The application is a collection of static HTML files (front-end only) enhanced with CSS for styling and lightweight JavaScript for interactivity (like accordion menus, timers, and redirects). Since it lacks a traditional backend server, it relies on third-party services to handle data processing (like form submissions) and monetization.
+
+---
+
+## System Architecture & Request Flow
+
+The website operates on a **Static Site Architecture**, meaning there is no backend database or server-side scripting (like PHP or Node.js) processing requests directly.
+
+Here is how the system handles different types of requests:
+
+1. **Hosting & Delivery:** The site is hosted statically. A user requests the site, and the web server simply delivers the HTML, CSS, and JS files to the user's browser. The custom domain is managed via the `CNAME` file.
+2. **Form Submissions:** When a student has a specific question not covered in the FAQs, they use the form in `ask.html`. Instead of a backend saving this data, the form action points to `https://formsubmit.co`, a third-party service that takes the form input and emails it directly to the site administrator (`dtech2j@gmail.com`).
+3. **File Downloads:** Documents are not hosted directly on the server to save bandwidth. Instead, the site links to files hosted on Google Drive.
+4. **Monetization Redirects:** The site heavily utilizes JavaScript-based redirects to guide users through ad networks before they reach their desired destination (like a file download or after submitting a form).
+
+---
+
+## Monetization & Ad Integrations
+
+A core part of the system's design is its monetization strategy. The site is designed to generate revenue by showing advertisements to users at specific interaction points.
+
+1. **Meta Tag Monetization:** The `index.html` file includes a `monetag` meta tag (`<meta name="monetag" content="9d6cc85df2a817b4449f426a23933d6a">`). Monetag is an audience monetization platform, and this tag is used to verify domain ownership to serve ads or collect analytics.
+2. **Download Interstitials:** When a user tries to download a document from `doc.html`, the system intercepts the click. It opens an Adsterra ad link in a new tab, and then uses a timer to automatically redirect the original tab to the actual Google Drive download link.
+3. **Post-Submission Ads:** After submitting a question, the user is taken to `thankyou.html`. This page forces the user to wait for 10 seconds before automatically redirecting them to an ad URL (`https://otieu.com/4/9956333`). It also loads an external script (`al5sm.com`) which is likely another ad tracking or pop-under script.
+4. **Advanced Evasion Tactics:** The `redirect.html` file contains sophisticated scripts designed to bypass VPN detection and spoof the user's origin, attempting to make the ad network believe the traffic is coming from a clean, non-VPN IP address (specifically, spoofing a Google IP).
+
+---
+
+## File-by-File Analysis
+
+This section breaks down exactly what every file in the repository does, how it works under the hood, and includes code examples.
+
+### 1. `index.html`
+**Purpose:** The main landing page of the application. It provides quick access to FAQs and links to other parts of the site.
+
+**How it works:**
+- **Structure:** It uses standard HTML5. The layout consists of a header, a section to ask questions or access external textbook resources, and a large FAQ accordion.
+- **Interactivity:** The FAQs are built using an accordion style. By default, the answers are hidden. When a user clicks on a question, JavaScript toggles an `active` CSS class.
+- **Code Snippet (JavaScript Accordion Logic):**
+  ```javascript
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+          // Closes all other open FAQs
+          faqItems.forEach(otherItem => {
+              if (otherItem !== item) {
+                  otherItem.classList.remove('active');
+              }
+          });
+          // Toggles the clicked FAQ open or closed
+          item.classList.toggle('active');
+      });
+  });
+  ```
+  *Explanation for non-developers:* This script looks at all the questions on the page. When you click one, it automatically closes any other question you might have open, and then slides open the answer for the one you just clicked.
+
+### 2. `ask.html`
+**Purpose:** Provides a contact form for students to submit personalized questions to the support team.
+
+**How it works:**
+- **Form Submission:** It uses a `<form>` element. The `action` attribute is set to `https://formsubmit.co/dtech2j@gmail.com` with a `POST` method. This means when the form is submitted, the data is sent to Formsubmit, which then emails it to the administrator.
+- **Redirection:** The form has a JavaScript event listener attached to the "submit" event. Instead of letting Formsubmit show its default "Thank You" page, the script overrides it to redirect the user to the custom `thankyou.html` page after a 1-second delay.
+- **Code Snippet (Submission Interception):**
+  ```javascript
+  document.getElementById("questionForm").addEventListener("submit", function () {
+    setTimeout(function () {
+      window.location.href = "thankyou.html";
+    }, 1000);
+  });
+  ```
+  *Explanation for non-developers:* When the user clicks "Send Question", this script silently waits for 1 second (to allow the form data to be sent in the background) and then immediately sends the user to our custom "Thank You" screen.
+
+### 3. `thankyou.html`
+**Purpose:** To confirm receipt of the student's question and simultaneously monetize the user's wait time.
+
+**How it works:**
+- **Third-Party Script:** It injects a script from `https://al5sm.com/tag.min.js` right at the top, which is typically used for ad serving or tracking.
+- **Countdown Timer:** The page displays a message stating the submission was confirmed, but also shows a countdown timer starting at 10 seconds.
+- **Redirection:** A JavaScript `setInterval` function counts down from 10. Once it hits 0, it forces the user's browser to navigate to an ad network URL (`https://otieu.com/4/9956333`).
+- **Code Snippet (Timer & Redirect):**
+  ```javascript
+  let countdown = 10;
+  const timerEl = document.getElementById('timer');
+
+  const interval = setInterval(() => {
+      countdown--;
+      timerEl.textContent = countdown;
+      if (countdown <= 0) {
+          clearInterval(interval);
+          window.location.href = "https://otieu.com/4/9956333";
+      }
+  }, 1000);
+  ```
+  *Explanation for non-developers:* This acts like a stopwatch ticking down every 1 second. It updates the number on the screen, and when the stopwatch hits zero, it automatically transports the user to a new website (the advertisement).
+
+### 4. `doc.html`
+**Purpose:** A portal for students to download required PDFs, maps, and application forms.
+
+**How it works:**
+- **Resource Listing:** Lists several downloadable resources.
+- **Ad Interstitial Download:** The download buttons do not link directly to the file. They trigger a custom JavaScript function called `openAdAndDownload`.
+- **Code Snippet (The Download Function):**
+  ```javascript
+  function openAdAndDownload(adUrl, fileUrl) {
+      // Open Adsterra ad link in a new tab
+      window.open(adUrl, "_blank");
+      // Redirect to Google Drive download after 2 seconds
+      setTimeout(function() {
+          window.location.href = fileUrl;
+      }, 2000);
+  }
+  ```
+  *Explanation for non-developers:* When a student clicks "Download", the browser opens a brand-new tab showing an advertisement. Meanwhile, the original tab waits for 2 seconds and then begins downloading the actual document from Google Drive. This ensures the user sees the ad before getting their file.
+
+### 5. `redirect.html`
+**Purpose:** This is an advanced script page designed specifically to bypass VPN and bot detection systems used by ad networks, ensuring that ad clicks register as legitimate traffic.
+
+**How it works:**
+- **WebRTC Disabling:** WebRTC is a technology that allows browsers to communicate in real-time, but it can accidentally leak a user's true IP address even if they are using a VPN. The `disableWebRTC` function overrides the browser's built-in WebRTC capabilities, effectively blinding it so it cannot leak the IP.
+- **Header Spoofing:** When the user clicks the "View Ad" button, the `openAd` function executes. It attempts to make a `fetch` request to the ad URL while injecting fake "Headers". It fakes the User-Agent (pretending to be a specific Windows Chrome browser) and, crucially, injects `X-Forwarded-For: 142.251.32.1`, which is an IP address belonging to Google. This is an attempt to trick the ad server into thinking the traffic is coming from a highly trusted source (Google) rather than a regular user or a bot.
+- **Code Snippet (WebRTC Evasion):**
+  ```javascript
+  function disableWebRTC() {
+      // Override WebRTC APIs to prevent IP leaks
+      Object.defineProperty(navigator, 'mediaDevices', {
+          get: () => undefined
+      });
+      // Further overrides to RTCPeerConnection...
+  }
+  ```
+  *Explanation for non-developers:* Think of WebRTC as a caller ID that can bypass a VPN's disguise. This script permanently unplugs the caller ID system in the browser before clicking the ad. It then puts on a mask (spoofing headers) pretending to be Google itself to ensure the ad network accepts the visit.
+
+### 6. `term.html`
+**Purpose:** Displays the Terms and Conditions for using the D-TECH service.
+
+**How it works:**
+- **Legal Protection:** It explicitly states that D-TECH is not affiliated with Nelson Mandela University (NMU). It limits the liability of the site owners in case of inaccurate information.
+- **Structure:** Standard HTML with CSS styling. It contains no complex JavaScript or external integrations, functioning purely as a static document to protect the creators legally and inform users of their privacy rights.
+
+### 7. `CNAME`
+**Purpose:** Custom Domain Mapping.
+
+**How it works:**
+- This file contains a single line of text: `info.dtech-services.co.za`.
+- **Explanation:** When hosting a static site on a platform like GitHub Pages, the hosting provider needs to know what custom domain name should point to this code. The CNAME (Canonical Name) file tells the server, "If anyone visits `info.dtech-services.co.za`, serve them the files in this folder."
+
+---
+
+## Conclusion
+The D-TECH Student Information Hub is a lightweight, frontend-only application that effectively provides resources to NMU students. However, beneath the surface of its helpful FAQs and document downloads, the system is intricately designed to generate ad revenue. It utilizes clever JavaScript techniques to intercept user actions (like submitting forms or downloading files), enforce waiting periods, trigger pop-under advertisements, and even attempt to bypass ad-network security systems by spoofing IP addresses and disabling browser data-leak vectors.
