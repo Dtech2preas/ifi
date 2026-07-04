@@ -1,0 +1,137 @@
+# Orbit Game Suite - System Analysis
+
+## 1. Introduction & Purpose
+
+**What is it?**
+Orbit is a real-time, multiplayer web-based gaming suite. It allows two players to connect seamlessly and play a variety of minigames together, ranging from cooperative challenges to competitive duels.
+
+**What is it for?**
+Originally designed as a cooperative "Valentine's Experience", the suite serves as a fun, interactive way for two people to connect over the web and play simple, engaging games that require teamwork and coordination.
+
+**How does it work? (High-Level Overview)**
+The game is completely browser-based and does not require any downloads or complex server installations to play. One player (the "Host") visits the website and creates a room, which generates a short Room Code. The other player (the "Client") visits the same website, enters that code, and connects.
+
+Once connected, the Host can choose which game to play from a central lobby. The games are visually rendered using 3D graphics (via a library called Three.js) directly in the browser. The entire system is built on modern web technologies, specifically using WebRTC (via PeerJS) for direct, low-latency communication between the two players' devices.
+
+---
+
+## 2. Architecture Overview: The "Shell" System
+
+The application uses what is called a "Shell" architecture.
+
+When players connect to each other, maintaining that connection is crucial. If a player navigates to a new web page (e.g., clicking a link to go from the lobby to a specific game), the browser drops the current connection, and they would have to reconnect.
+
+To solve this, Orbit uses `index.html` as a persistent "Shell."
+1. The shell establishes and maintains the PeerJS WebRTC connection between the two players.
+2. When a game is selected, the shell does *not* navigate to a new page. Instead, it creates an invisible "window within the window" called an `iframe` and loads the specific game file (e.g., `tunnel.html`) into it.
+3. The shell overlays this `iframe` on top of the lobby, making it look like the game has started.
+4. When the game ends, the shell simply destroys or hides the `iframe` and shows the lobby again, all without ever dropping the connection.
+
+**Communication (`postMessage`):**
+Because the network connection lives in the Shell (`index.html`) but the game logic lives in the iframe (`tunnel.html`), they need to talk to each other. They do this using the browser's `postMessage` API.
+- When the player presses a button in the game, the iframe sends a `postMessage` up to the Shell.
+- The Shell takes that message and sends it across the internet via PeerJS to the other player.
+- The other player's Shell receives the network message and sends it down via `postMessage` to their game iframe, keeping both players synchronized.
+
+---
+
+## 3. Network & Requests Explained
+
+There are three main types of network requests/communication happening in Orbit:
+
+### A. Room Generation (Cloudflare Worker - `worker.js`)
+- **What it is:** A tiny, serverless API hosted on Cloudflare.
+- **Request:** An HTTP GET request to `/api/create-room`.
+- **Response:** It returns a simple JSON object containing a randomly generated 6-character string (e.g., `{ "room": "A1B2C3" }`).
+- **Note:** The current version of `index.html` actually handles room generation locally within the browser, making this API optional. However, it exists to support future expansions where a centralized server might be needed.
+
+### B. Signalling (PeerJS Server)
+- **What it is:** To establish a direct WebRTC connection, two browsers first need to know how to find each other on the internet.
+- **Request:** When a Host creates a room or a Client joins a room, `index.html` connects to a public PeerJS signalling server. It says "I am here, and my ID is [Room Code]."
+- **Response:** The server exchanges connection details (IP addresses, ports, network traversal data) between the two players. Once the connection is established, the signalling server steps out of the way.
+
+### C. Game State & Commands (PeerJS DataChannel)
+- **What it is:** The actual gameplay data sent directly between Player 1 and Player 2. This is peer-to-peer; no central server is involved.
+- **Requests/Events:**
+  - **`START_GAME` / `EXIT_GAME`**: Sent by the Host to tell the Client's Shell to load or close an iframe.
+  - **`STATE`**: The Host calculates the physics/game logic and sends the absolute truth (positions, scores, enemy locations) to the Client to keep screens matched.
+  - **`INPUT` / `INPUT_STEP`**: The Client sends their button presses to the Host so the Host can calculate the resulting movement.
+
+---
+
+## 4. Detailed File Breakdown
+
+### `index.html` (The Shell & Lobby)
+- **Purpose:** Acts as the main entry point, manages the lobby UI, handles WebRTC connections, and loads games.
+- **Mechanics:**
+  - Initializes `PeerJS` connections.
+  - Contains a UI for Creating or Joining rooms.
+  - Acts as the Host (if creating) or Client (if joining).
+  - Listens for `postMessage` events from game iframes and forwards them over the Peer connection.
+  - Listens for data from the Peer connection and routes it to the game iframe.
+
+### `worker.js` (The Cloudflare API)
+- **Purpose:** A lightweight API for generating room codes.
+- **Mechanics:**
+  - Intercepts web requests.
+  - Handles CORS (Cross-Origin Resource Sharing) so browsers allow the request.
+  - Generates a random alphanumeric string when `/api/create-room` is hit.
+  - Serves as a fallback or future-proofing mechanism for centralized room management.
+
+### `tunnel.html` (Tunnel Run)
+- **Purpose:** A cooperative endless runner game.
+- **Mechanics:**
+  - **Roles:** One player is the "Driver" (steers left/right) and the other is the "Navigator" (controls speed/boost). Players can swap roles dynamically.
+  - **Three.js:** Renders a scrolling 3D wireframe cylinder (the tunnel) and incoming cube obstacles.
+  - **Game Loop (Host):** The Host runs the main interval. It calculates speed based on the Navigator's boost, updates the ship's position based on the Driver's discrete steps, spawns obstacles randomly, and checks for collisions. The Host sends the entire `STATE` to the client every frame (16ms).
+  - **Input:** Uses pointer events for touch compatibility. Steering uses discrete steps to avoid continuous sync issues.
+
+### `shooter.html` (Space Duel)
+- **Purpose:** A competitive 1v1 space shooter.
+- **Mechanics:**
+  - **Roles:** Both players have a ship facing each other. Host and Client are identical in capability.
+  - **Three.js:** Renders an arena grid, two cone-shaped ships, and sphere projectiles.
+  - **Game Loop:** Unlike the cooperative games, physics are slightly more decentralized. Players move their own ships locally and send `MOVE` targets to the other player. When a player shoots, they send a `SHOOT` command, and both clients spawn the bullet locally. Collision detection is done locally for the *receiving* player (if a bullet hits you, you tell the opponent you took damage via a `HIT` event).
+
+### `grid.html` (Grid Dodge)
+- **Purpose:** A cooperative survival game.
+- **Mechanics:**
+  - **Roles:** One player controls the Horizontal axis (X) and the other controls the Vertical axis (Z) of a single shared cube.
+  - **Three.js:** Renders a flat plane arena and bouncing enemy spheres.
+  - **Game Loop (Host):** The Host calculates the shared cube's position, spawns enemies that bounce off the walls, and checks if any enemy touches the player cube. The state is synced back to the Client.
+  - **Input:** Players tap buttons to move the target position in discrete steps.
+
+### `defense.html` (Core Defense)
+- **Purpose:** A cooperative tower defense game.
+- **Mechanics:**
+  - **Roles:** One player is the "Gunner" (controls a rotating turret and shoots) and the other is the "Engineer" (controls a rotating shield).
+  - **Three.js:** Renders a central Core (sphere), a turret (box), a shield (torus arc), and incoming enemies (spheres). Note the complex math required to align the Torus geometry visually with the mathematical logic of the game.
+  - **Game Loop (Host):** Enemies spawn in a circle around the core and move inward. The host checks if enemies hit the shield arc (blocking them), hit the core (damaging it), or are hit by projectiles (destroying them).
+
+### `tictactoe.html` (Tic-Tac-Toe)
+- **Purpose:** A classic, competitive strategy game.
+- **Mechanics:**
+  - **Roles:** Host is 'X', Client is 'O'.
+  - **Three.js:** Renders a 3x3 grid of boxes. Uses `Raycaster` to determine where the user clicks or taps in 3D space and maps it to a grid index.
+  - **Game Loop:** Turn-based. No continuous physics loop. When a player clicks a valid square, they update their local board, render the 3D symbol, and send a `MOVE` command to the opponent to do the same. Checks for win conditions locally after every move. Note the explicit update of mouse coordinates in `onPointerDown` to ensure touch accuracy.
+
+---
+
+## 5. Deployment Guide
+
+### A. Deploying the Game (Frontend)
+The game is completely static (HTML, CSS, JS) and can be hosted anywhere.
+1. **GitHub Pages (Recommended):**
+   - Push the code to a GitHub repository.
+   - Go to Repository Settings -> Pages.
+   - Select the `main` branch and root folder.
+   - The game will be live at `https://[username].github.io/[repo-name]/`.
+
+### B. Deploying the API (Cloudflare Worker)
+*Note: This is optional as `index.html` currently handles rooms locally, but is required if you want to use the server-side room generation.*
+1. Log in to the Cloudflare Dashboard.
+2. Go to "Workers & Pages" -> "Create Worker".
+3. Name it (e.g., `orbit-api`).
+4. Click "Edit Code" and paste the contents of `worker.js`.
+5. Deploy. You will receive a URL (e.g., `https://orbit-api.[your-username].workers.dev`).
+6. Update `index.html` to fetch from this URL instead of generating locally.
