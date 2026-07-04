@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DTECH Student Information Hub | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for DTECH Student Information Hub." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DTECH Student Information Hub</h1>
+      <div class="subtext">Centralized Student Resources</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>Table of Contents</h2>
+<p>1. [Project Overview](#project-overview)</p>
+<p>2. [System Architecture & Request Flow](#system-architecture--request-flow)</p>
+<p>3. [Monetization & Ad Integrations](#monetization--ad-integrations)</p>
+<p>4. [File-by-File Analysis](#file-by-file-analysis)</p>
+<ul>
+<li>[index.html](#indexhtml)</li>
+<li>[ask.html](#askhtml)</li>
+<li>[thankyou.html](#thankyouhtml)</li>
+<li>[doc.html](#dochtml)</li>
+<li>[redirect.html](#redirecthtml)</li>
+<li>[term.html](#termhtml)</li>
+<li>[CNAME](#cname)</li>
+</ul>
+<p>5. [Conclusion](#conclusion)</p>
+<p>---</p>
+<h2>Project Overview</h2>
+<p><strong>What is it?</strong></p>
+<p>The D-TECH Student Information Hub is a web-based portal designed to assist students of Nelson Mandela University (NMU). It acts as an independent resource center where students can find answers to frequently asked questions, download important academic documents (such as timetables and maps), and submit their own inquiries to a support team.</p>
+<p><strong>What is it for?</strong></p>
+<p>The primary purpose of the website is to streamline the dissemination of information for NMU students, providing quick access to guides covering orientation, NSFAS (financial aid), accommodation, and course changes. It is a student-led initiative, completely independent of the university itself.</p>
+<p><strong>How does it work?</strong></p>
+<p>The application is a collection of static HTML files (front-end only) enhanced with CSS for styling and lightweight JavaScript for interactivity (like accordion menus, timers, and redirects). Since it lacks a traditional backend server, it relies on third-party services to handle data processing (like form submissions) and monetization.</p>
+<p>---</p>
+<h2>System Architecture & Request Flow</h2>
+<p>The website operates on a <strong>Static Site Architecture</strong>, meaning there is no backend database or server-side scripting (like PHP or Node.js) processing requests directly.</p>
+<p>Here is how the system handles different types of requests:</p>
+<p>1. <strong>Hosting & Delivery:</strong> The site is hosted statically. A user requests the site, and the web server simply delivers the HTML, CSS, and JS files to the user's browser. The custom domain is managed via the <code>CNAME</code> file.</p>
+<p>2. <strong>Form Submissions:</strong> When a student has a specific question not covered in the FAQs, they use the form in <code>ask.html</code>. Instead of a backend saving this data, the form action points to <code>https://formsubmit.co</code>, a third-party service that takes the form input and emails it directly to the site administrator (<code>dtech2j@gmail.com</code>).</p>
+<p>3. <strong>File Downloads:</strong> Documents are not hosted directly on the server to save bandwidth. Instead, the site links to files hosted on Google Drive.</p>
+<p>4. <strong>Monetization Redirects:</strong> The site heavily utilizes JavaScript-based redirects to guide users through ad networks before they reach their desired destination (like a file download or after submitting a form).</p>
+<p>---</p>
+<h2>Monetization & Ad Integrations</h2>
+<p>A core part of the system's design is its monetization strategy. The site is designed to generate revenue by showing advertisements to users at specific interaction points.</p>
+<p>1. <strong>Meta Tag Monetization:</strong> The <code>index.html</code> file includes a <code>monetag</code> meta tag (<code>&lt;meta name="monetag" content="9d6cc85df2a817b4449f426a23933d6a"&gt;</code>). Monetag is an audience monetization platform, and this tag is used to verify domain ownership to serve ads or collect analytics.</p>
+<p>2. <strong>Download Interstitials:</strong> When a user tries to download a document from <code>doc.html</code>, the system intercepts the click. It opens an Adsterra ad link in a new tab, and then uses a timer to automatically redirect the original tab to the actual Google Drive download link.</p>
+<p>3. <strong>Post-Submission Ads:</strong> After submitting a question, the user is taken to <code>thankyou.html</code>. This page forces the user to wait for 10 seconds before automatically redirecting them to an ad URL (<code>https://otieu.com/4/9956333</code>). It also loads an external script (<code>al5sm.com</code>) which is likely another ad tracking or pop-under script.</p>
+<p>4. <strong>Advanced Evasion Tactics:</strong> The <code>redirect.html</code> file contains sophisticated scripts designed to bypass VPN detection and spoof the user's origin, attempting to make the ad network believe the traffic is coming from a clean, non-VPN IP address (specifically, spoofing a Google IP).</p>
+<p>---</p>
+<h2>File-by-File Analysis</h2>
+<p>This section breaks down exactly what every file in the repository does, how it works under the hood, and includes code examples.</p>
+<h3>1. `index.html`</h3>
+<p><strong>Purpose:</strong> The main landing page of the application. It provides quick access to FAQs and links to other parts of the site.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li><strong>Structure:</strong> It uses standard HTML5. The layout consists of a header, a section to ask questions or access external textbook resources, and a large FAQ accordion.</li>
+<li><strong>Interactivity:</strong> The FAQs are built using an accordion style. By default, the answers are hidden. When a user clicks on a question, JavaScript toggles an <code>active</code> CSS class.</li>
+<li><strong>Code Snippet (JavaScript Accordion Logic):</strong></li>
+<pre><code>
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item =&gt; {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () =&gt; {
+          // Closes all other open FAQs
+          faqItems.forEach(otherItem =&gt; {
+              if (otherItem !== item) {
+                  otherItem.classList.remove('active');
+              }
+          });
+          // Toggles the clicked FAQ open or closed
+          item.classList.toggle('active');
+      });
+  });
+</code></pre>
+</ul>
+<p>*Explanation for non-developers:* This script looks at all the questions on the page. When you click one, it automatically closes any other question you might have open, and then slides open the answer for the one you just clicked.</p>
+<h3>2. `ask.html`</h3>
+<p><strong>Purpose:</strong> Provides a contact form for students to submit personalized questions to the support team.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li><strong>Form Submission:</strong> It uses a <code>&lt;form&gt;</code> element. The <code>action</code> attribute is set to <code>https://formsubmit.co/dtech2j@gmail.com</code> with a <code>POST</code> method. This means when the form is submitted, the data is sent to Formsubmit, which then emails it to the administrator.</li>
+<li><strong>Redirection:</strong> The form has a JavaScript event listener attached to the "submit" event. Instead of letting Formsubmit show its default "Thank You" page, the script overrides it to redirect the user to the custom <code>thankyou.html</code> page after a 1-second delay.</li>
+<li><strong>Code Snippet (Submission Interception):</strong></li>
+<pre><code>
+  document.getElementById("questionForm").addEventListener("submit", function () {
+    setTimeout(function () {
+      window.location.href = "thankyou.html";
+    }, 1000);
+  });
+</code></pre>
+</ul>
+<p>*Explanation for non-developers:* When the user clicks "Send Question", this script silently waits for 1 second (to allow the form data to be sent in the background) and then immediately sends the user to our custom "Thank You" screen.</p>
+<h3>3. `thankyou.html`</h3>
+<p><strong>Purpose:</strong> To confirm receipt of the student's question and simultaneously monetize the user's wait time.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li><strong>Third-Party Script:</strong> It injects a script from <code>https://al5sm.com/tag.min.js</code> right at the top, which is typically used for ad serving or tracking.</li>
+<li><strong>Countdown Timer:</strong> The page displays a message stating the submission was confirmed, but also shows a countdown timer starting at 10 seconds.</li>
+<li><strong>Redirection:</strong> A JavaScript <code>setInterval</code> function counts down from 10. Once it hits 0, it forces the user's browser to navigate to an ad network URL (<code>https://otieu.com/4/9956333</code>).</li>
+<li><strong>Code Snippet (Timer & Redirect):</strong></li>
+<pre><code>
+  let countdown = 10;
+  const timerEl = document.getElementById('timer');
+
+  const interval = setInterval(() =&gt; {
+      countdown--;
+      timerEl.textContent = countdown;
+      if (countdown &lt;= 0) {
+          clearInterval(interval);
+          window.location.href = "https://otieu.com/4/9956333";
+      }
+  }, 1000);
+</code></pre>
+</ul>
+<p>*Explanation for non-developers:* This acts like a stopwatch ticking down every 1 second. It updates the number on the screen, and when the stopwatch hits zero, it automatically transports the user to a new website (the advertisement).</p>
+<h3>4. `doc.html`</h3>
+<p><strong>Purpose:</strong> A portal for students to download required PDFs, maps, and application forms.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li><strong>Resource Listing:</strong> Lists several downloadable resources.</li>
+<li><strong>Ad Interstitial Download:</strong> The download buttons do not link directly to the file. They trigger a custom JavaScript function called <code>openAdAndDownload</code>.</li>
+<li><strong>Code Snippet (The Download Function):</strong></li>
+<pre><code>
+  function openAdAndDownload(adUrl, fileUrl) {
+      // Open Adsterra ad link in a new tab
+      window.open(adUrl, "_blank");
+      // Redirect to Google Drive download after 2 seconds
+      setTimeout(function() {
+          window.location.href = fileUrl;
+      }, 2000);
+  }
+</code></pre>
+</ul>
+<p>*Explanation for non-developers:* When a student clicks "Download", the browser opens a brand-new tab showing an advertisement. Meanwhile, the original tab waits for 2 seconds and then begins downloading the actual document from Google Drive. This ensures the user sees the ad before getting their file.</p>
+<h3>5. `redirect.html`</h3>
+<p><strong>Purpose:</strong> This is an advanced script page designed specifically to bypass VPN and bot detection systems used by ad networks, ensuring that ad clicks register as legitimate traffic.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li><strong>WebRTC Disabling:</strong> WebRTC is a technology that allows browsers to communicate in real-time, but it can accidentally leak a user's true IP address even if they are using a VPN. The <code>disableWebRTC</code> function overrides the browser's built-in WebRTC capabilities, effectively blinding it so it cannot leak the IP.</li>
+<li><strong>Header Spoofing:</strong> When the user clicks the "View Ad" button, the <code>openAd</code> function executes. It attempts to make a <code>fetch</code> request to the ad URL while injecting fake "Headers". It fakes the User-Agent (pretending to be a specific Windows Chrome browser) and, crucially, injects <code>X-Forwarded-For: 142.251.32.1</code>, which is an IP address belonging to Google. This is an attempt to trick the ad server into thinking the traffic is coming from a highly trusted source (Google) rather than a regular user or a bot.</li>
+<li><strong>Code Snippet (WebRTC Evasion):</strong></li>
+<pre><code>
+  function disableWebRTC() {
+      // Override WebRTC APIs to prevent IP leaks
+      Object.defineProperty(navigator, 'mediaDevices', {
+          get: () =&gt; undefined
+      });
+      // Further overrides to RTCPeerConnection...
+  }
+</code></pre>
+</ul>
+<p>*Explanation for non-developers:* Think of WebRTC as a caller ID that can bypass a VPN's disguise. This script permanently unplugs the caller ID system in the browser before clicking the ad. It then puts on a mask (spoofing headers) pretending to be Google itself to ensure the ad network accepts the visit.</p>
+<h3>6. `term.html`</h3>
+<p><strong>Purpose:</strong> Displays the Terms and Conditions for using the D-TECH service.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li><strong>Legal Protection:</strong> It explicitly states that D-TECH is not affiliated with Nelson Mandela University (NMU). It limits the liability of the site owners in case of inaccurate information.</li>
+<li><strong>Structure:</strong> Standard HTML with CSS styling. It contains no complex JavaScript or external integrations, functioning purely as a static document to protect the creators legally and inform users of their privacy rights.</li>
+</ul>
+<h3>7. `CNAME`</h3>
+<p><strong>Purpose:</strong> Custom Domain Mapping.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li>This file contains a single line of text: <code>info.dtech-services.co.za</code>.</li>
+<li><strong>Explanation:</strong> When hosting a static site on a platform like GitHub Pages, the hosting provider needs to know what custom domain name should point to this code. The CNAME (Canonical Name) file tells the server, "If anyone visits <code>info.dtech-services.co.za</code>, serve them the files in this folder."</li>
+</ul>
+<p>---</p>
+<h2>Conclusion</h2>
+<p>The D-TECH Student Information Hub is a lightweight, frontend-only application that effectively provides resources to NMU students. However, beneath the surface of its helpful FAQs and document downloads, the system is intricately designed to generate ad revenue. It utilizes clever JavaScript techniques to intercept user actions (like submitting forms or downloading files), enforce waiting periods, trigger pop-under advertisements, and even attempt to bypass ad-network security systems by spoofing IP addresses and disabling browser data-leak vectors.</p>
+
+        <a href="https://info.dtech-services.co.za" class="btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Visit Live Platform</a>
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>

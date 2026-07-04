@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>: DTECH_BOT_V1 (MetaTrader 5 Trading Bot) | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for : DTECH_BOT_V1 (MetaTrader 5 Trading Bot)." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>: DTECH_BOT_V1 (MetaTrader 5 Trading Bot)</h1>
+      <div class="subtext">Automated Trading Architecture</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>1. Overview and Purpose</h2>
+<p><strong>What is it?</strong></p>
+<p>DTECH_BOT_V1 is an automated Forex trading bot (also known as an Expert Advisor or EA) built for the MetaTrader 5 (MT5) platform. It is written in MQL5 (MetaQuotes Language 5).</p>
+<p><strong>What is it for?</strong></p>
+<p>The primary purpose of this bot is to automatically monitor the financial markets, identify trading opportunities based on a specific technical strategy, and execute trades (buy and sell orders) without requiring manual human intervention. It is designed with a "Safe Mode" and a "Beginner Safety Pack," making it accessible for new traders while still offering robust tools for developers and experienced users.</p>
+<p><strong>Who is it for?</strong></p>
+<ul>
+<li><strong>General Users/Beginners:</strong> It features a simplified on-chart dashboard, a "Master Switch" to easily turn off trading, and automated risk management that prevents over-leveraging.</li>
+<li><strong>Developers:</strong> The code is well-structured, modular, and extensively commented, making it easy to modify, optimize, or extend.</li>
+</ul>
+<p>---</p>
+<h2>2. How the Bot Works: The Core Strategy</h2>
+<p>The bot uses a combination of two popular technical indicators to make decisions:</p>
+<p>1. <strong>EMA (Exponential Moving Average):</strong> Used to determine the overall <strong>Trend</strong>.</p>
+<p>2. <strong>RSI (Relative Strength Index):</strong> Used to generate exact <strong>Entry Signals</strong>.</p>
+<h3>The Logic:</h3>
+<ul>
+<li><strong>Identifying the Trend:</strong></li>
+<li>If the current price is *above* the 50-period EMA, the bot considers the market to be in an <strong>Uptrend</strong>. In an uptrend, the bot will *only* look for opportunities to BUY.</li>
+<li>If the current price is *below* the 50-period EMA, the bot considers the market to be in a <strong>Downtrend</strong>. In a downtrend, the bot will *only* look for opportunities to SELL.</li>
+<li><strong>Triggering a Trade (Entry Signals):</strong></li>
+<li><strong>BUY Request:</strong> During an Uptrend, the bot waits for the RSI to dip below 30 (which means the market is "Oversold" or temporarily too cheap). When the RSI crosses back up above 30, it sends a BUY request to the broker.</li>
+<li><strong>SELL Request:</strong> During a Downtrend, the bot waits for the RSI to spike above 70 (which means the market is "Overbought" or temporarily too expensive). When the RSI crosses back down below 70, it sends a SELL request to the broker.</li>
+</ul>
+<p>---</p>
+<h2>3. How the Bot Makes Requests (Trade Execution)</h2>
+<p>Whenever the bot decides to place a trade, it communicates with the MT5 Trade Server using the standard <code>#include &lt;Trade/Trade.mqh&gt;</code> library.</p>
+<p><strong>What happens during a request?</strong></p>
+<p>1. <strong>Condition Met:</strong> The EMA and RSI align perfectly.</p>
+<p>2. <strong>Calculation:</strong> The bot calculates the exact lot size (trade volume) based on how much money is in the account and the user's risk percentage setting.</p>
+<p>3. <strong>Execution:</strong> It sends a network request to the broker (e.g., IC Markets) asking to execute a "Market Order" at the best available current price (<code>SYMBOL_ASK</code> for Buys, <code>SYMBOL_BID</code> for Sells).</p>
+<p>4. <strong>Safety Nets Attached:</strong> Along with the entry order, the bot simultaneously sends a <strong>Stop Loss (SL)</strong> request to limit potential losses, and a <strong>Take Profit (TP)</strong> request to automatically close the trade when a specific profit target is reached.</p>
+<p>---</p>
+<h2>4. Key Features & Functionality Details</h2>
+<h3>A. The Master Switch & Beginner Safety Pack</h3>
+<ul>
+<li><strong>Master Switch:</strong> A simple True/False toggle in the settings. If turned False, the bot immediately stops scanning for trades and pauses all new activity. It will display a paused message on the screen.</li>
+<li><strong>Force Test Trade:</strong> A troubleshooting tool. If enabled, the bot will bypass normal strategy rules and force a single, one-time micro-trade. This is used to verify that the bot is properly connected to the broker and has permission to trade.</li>
+</ul>
+<h3>B. Risk and Money Management</h3>
+<p>The bot is incredibly careful with account balance, prioritizing capital preservation:</p>
+<ul>
+<li><strong>Risk Modes:</strong> Users can choose <code>RISK_FIXED</code> (e.g., always trade 0.01 lots) or <code>RISK_PERCENT</code> (e.g., risk exactly 1% of the total account balance per trade).</li>
+<li><strong>Dynamic Lot Sizing:</strong> In Percent mode, if the Stop Loss is hit, the trader will only lose the exact percentage they specified (e.g., 1%).</li>
+<li><strong>Risk Fallback:</strong> If the account balance is too small to mathematically risk 1%, the bot will automatically fall back to the broker's minimum allowed lot size (e.g., 0.01) rather than failing to trade, alerting the user via logs.</li>
+</ul>
+<h3>C. Trade Management & Trailing Stops</h3>
+<p>Once a trade is open, the bot manages it actively:</p>
+<ul>
+<li><strong>Trailing Stop:</strong> As a trade moves into profit, the bot automatically moves the Stop Loss request to "lock in" profits. For example, if the trade is 100 points in profit, the bot adjusts the Stop Loss to be 50 points behind the current price. If the market suddenly reverses, the trade closes in profit.</li>
+</ul>
+<h3>D. Environment Checks</h3>
+<p>Before any trade request is made, the bot checks the trading environment:</p>
+<ul>
+<li>Is the terminal actually connected to the broker?</li>
+<li>Is the current spread (the broker's fee) acceptable? If the spread is higher than the <code>InpMaxSpread</code> setting, trading is blocked to avoid high costs.</li>
+<li>Are we within the allowed trading hours (e.g., 8 AM to 8 PM)?</li>
+</ul>
+<p>---</p>
+<h2>5. Detailed Code Breakdown (File-by-File Explanation)</h2>
+<p>Since the entire application is purposefully contained within a single file to ensure simplicity, here is the detailed breakdown of <code>DTECH_BOT_V1.mq5</code>:</p>
+<h3>1. `Inputs & Settings` (Variables)</h3>
+<ul>
+<li><strong><code>=== MAIN CONTROL ===</code></strong>: Contains <code>InpMasterSwitch</code> and <code>InpForceTestTrade</code>.</li>
+<li><strong><code>=== Money & Risk ===</code></strong>: Defines <code>InpRiskMode</code>, <code>InpRiskPercent</code> (1.0 default), <code>InpUseRiskFallback</code> (allows minimum lots for small accounts), and lot limits.</li>
+<li><strong><code>=== Strategy Strategy ===</code></strong>: Parameters for the indicators (<code>InpTrendPeriod</code> = 50, <code>InpRsiPeriod</code> = 9, Overbought = 70, Oversold = 30) and the Stop Loss/Take Profit distances.</li>
+<li><strong><code>=== Trade Management ===</code></strong>: Settings for the Trailing Stop (<code>InpUseTrailing</code>, <code>InpTrailStart</code>, <code>InpTrailDist</code>).</li>
+<li><strong><code>=== Advanced Settings ===</code></strong>: Environmental controls like Max Spread, Trading Hours (<code>InpStartHour</code>, <code>InpEndHour</code>), Max simultaneous positions, and <code>InpForceHistoryDownload</code>.</li>
+</ul>
+<h3>2. `OnInit()` - The Setup Phase</h3>
+<ul>
+<li><strong>What it does:</strong> This function runs exactly once when the bot is dragged onto a chart.</li>
+<li><strong>How it works:</strong> It sets up the technical indicators by getting "handles" (references) to the EMA and RSI. It configures the Trade Object with a "Magic Number" (a unique ID so the bot only manages its own trades). It also triggers <code>DownloadHistory()</code> to ensure the chart data is fully up-to-date, preventing false signals.</li>
+</ul>
+<h3>3. `OnDeinit()` - The Cleanup Phase</h3>
+<ul>
+<li><strong>What it does:</strong> Runs when the bot is removed from the chart.</li>
+<li><strong>How it works:</strong> It cleans up computer memory by releasing the indicator handles and clears any text left on the screen.</li>
+</ul>
+<h3>4. `OnTick()` - The Main Engine (The Heartbeat)</h3>
+<ul>
+<li><strong>What it does:</strong> This function runs every single time the price of the asset changes (which can be multiple times per second).</li>
+<li><strong>How it works:</strong></li>
+</ul>
+<p>1. Checks the <code>InpMasterSwitch</code>. If OFF, it stops immediately.</p>
+<p>2. Calls <code>UpdateStatus()</code> to draw the dashboard on the screen.</p>
+<p>3. Calls <code>CheckEnvironment()</code> to ensure spreads and hours are safe.</p>
+<p>4. Checks if a <code>Force Test Trade</code> was requested and executes it if needed.</p>
+<p>5. Calls <code>ManagePositions()</code> to update any Trailing Stops on currently open trades.</p>
+<p>6. Counts how many trades are currently open. If it's less than <code>InpMaxPositions</code>, it calls <code>CheckForEntry()</code> to hunt for new trades.</p>
+<h3>5. `CheckEnvironment()` - The Security Guard</h3>
+<ul>
+<li><strong>What it does:</strong> Prevents bad trades.</li>
+<li><strong>How it works:</strong> Calculates the real-time spread (Ask price minus Bid price). If it's too high, it returns <code>false</code>. It also compares the current server time to the user's allowed hours.</li>
+</ul>
+<h3>6. `CalculateLotSize()` - The Accountant</h3>
+<ul>
+<li><strong>What it does:</strong> Determines exactly how large a trade should be.</li>
+<li><strong>How it works:</strong> If using <code>RISK_PERCENT</code>, it takes the Account Balance, calculates what 1% is in dollars, looks at the Stop Loss distance, and reverse-engineers the exact Lot Size required so that hitting the Stop Loss loses exactly 1%. It normalizes this number to the broker's step size. If the result is smaller than the minimum allowed (e.g., 0.001 but the broker requires 0.01), it uses the "Risk Fallback" feature to round up to 0.01 and prints a warning to the logs.</li>
+</ul>
+<h3>7. `ManagePositions()` - The Trade Manager</h3>
+<ul>
+<li><strong>What it does:</strong> Handles Trailing Stops.</li>
+<li><strong>How it works:</strong> Loops through all open trades. If a Buy trade is in profit by <code>InpTrailStart</code> points, it calculates a new Stop Loss price behind the current price by <code>InpTrailDist</code> points. It uses <code>trade.PositionModify()</code> to send a request to the broker to move the Stop Loss. It only ever moves the Stop Loss in a profitable direction; it will never widen the loss.</li>
+</ul>
+<h3>8. `CheckForEntry()` - The Sniper (Strategy Execution)</h3>
+<ul>
+<li><strong>What it does:</strong> Looks for the exact moment to strike.</li>
+<li><strong>How it works:</strong></li>
+</ul>
+<p>1. Copies the latest EMA and RSI data into memory arrays.</p>
+<p>2. Determines the Trend: Is <code>Close Price &gt; EMA</code>?</p>
+<p>3. Looks for the RSI Crossover: Was the RSI below 30 on the previous candle, and is it now above 30?</p>
+<p>4. If all conditions align, it calculates the lot size via <code>CalculateLotSize()</code>.</p>
+<p>5. It constructs the Trade Request: calculates the Ask Price, SL Price, and TP Price.</p>
+<p>6. It fires the <code>trade.Buy()</code> or <code>trade.Sell()</code> command, passing a specific comment ("DTECH Machine Gun Buy/Sell") to uniquely mark the trade in the broker's system.</p>
+<h3>9. `DownloadHistory()` - The Data Sync</h3>
+<ul>
+<li><strong>What it does:</strong> Ensures the bot isn't trading blindly.</li>
+<li><strong>How it works:</strong> Asks the broker server for the last 3 years of price history (<code>CopyRates</code>). This ensures the moving averages are calculated accurately immediately upon startup.</li>
+</ul>
+<h3>10. `UpdateStatus()` - The Dashboard</h3>
+<ul>
+<li><strong>What it does:</strong> Provides human-readable feedback directly on the MT5 chart.</li>
+<li><strong>How it works:</strong> It reads the current account balance, equity, risk settings, and the live status of the Trend and RSI. It formats this data into a clean, easy-to-read text block and projects it onto the top left corner of the chart using the <code>Comment()</code> function. This serves as a "heartbeat," letting the user know the bot is alive, calculating, and monitoring, even when no trades are being taken.</li>
+</ul>
+<p>---</p>
+<h2>6. Installation & Usage Summary (For General Users)</h2>
+<p>1. <strong>Placement:</strong> The <code>DTECH_BOT_V1.mq5</code> file should be placed in the <code>MQL5\Experts</code> folder of the MetaTrader 5 Data Directory.</p>
+<p>2. <strong>Compilation:</strong> Open the file in MetaEditor and click "Compile" to generate the executable <code>.ex5</code> file.</p>
+<p>3. <strong>Execution:</strong> Drag the bot from the MT5 Navigator panel onto a chart (e.g., EURUSD).</p>
+<p>4. <strong>Configuration:</strong> Check the "Inputs" tab to adjust the Risk Percentage, check the Master Switch, and customize Stop Loss/Take Profit settings. Ensure "Allow Algo Trading" is checked in MT5.</p>
+<p>5. <strong>Monitoring:</strong> Look at the top left of the chart. The DTECH Dashboard will appear, showing live Equity, the current Trend, and the Master Switch status. If it says "Trading Active," the system is fully operational.</p>
+
+        <a href="https://bot.dtech-services.co.za" class="btn-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Visit Live Platform</a>
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>

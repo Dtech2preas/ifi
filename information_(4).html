@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DTECH Cloud: | D-TECH Engineering Details</title>
+    <meta name="description" content="Technical architecture and engineering details for DTECH Cloud:." />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+      body { background-color: #0b0f19; color: #cbd5e1; font-family: "Segoe UI", sans-serif; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+      header { padding: 2rem 1.5rem; border-bottom: 1px solid #1e293b; text-align: center; background: linear-gradient(to bottom, #111827, #0b0f19); }
+      h1 { font-size: 2.2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; }
+      .subtext { font-size: 1.1rem; color: #94a3b8; max-width: 800px; margin: 0 auto; }
+
+      .content-section { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+
+      .tech-box { background-color: #111827; border: 1px solid #1f2937; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+      .tech-box h2 { color: #e2e8f0; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem; }
+      .tech-box h3 { color: #94a3b8; font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+      .tech-box p { margin-bottom: 1rem; color: #cbd5e1; }
+      .tech-box ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+      .tech-box li { margin-bottom: 0.5rem; }
+
+      .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background-color: #1f2937; color: #e2e8f0; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: background-color 0.2s; margin-bottom: 2rem; border: 1px solid #374151; }
+      .btn-back:hover { background-color: #374151; }
+
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: linear-gradient(to right, #2563eb, #1e40af); color: white; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; margin-top: 1rem; width: 100%; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+
+      footer { padding: 1.5rem; text-align: center; border-top: 1px solid #1e293b; font-size: 0.85rem; color: #64748b; margin-top: auto; }
+      footer a { color: #60a5fa; text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+
+      code { background-color: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; color: #93c5fd; }
+      pre { background-color: #0f172a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #1e293b; }
+      pre code { background-color: transparent; padding: 0; color: #e2e8f0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DTECH Cloud:</h1>
+      <div class="subtext">Serverless Hosting & Data Capture</div>
+    </header>
+
+    <main class="content-section">
+      <a href="preasx24_gateway.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Gateway
+      </a>
+
+      <div class="tech-box">
+        <h2>1. System Overview</h2>
+<p>D-TECH Cloud is a centralized platform designed to allow users to securely deploy hosted websites (or templates) and capture form submissions from those sites seamlessly. The architecture separates the user-facing dashboards and management screens (static HTML interfaces) from the backend API services (Cloudflare Workers) and the actual live site hosting (Vercel).</p>
+<p><strong>Primary Goals & Functions:</strong></p>
+<ul>
+<li><strong>Secure Deployment:</strong> Users can deploy custom HTML or pre-built templates to a dynamically generated subdomain hosted on Vercel.</li>
+<li><strong>Data Capture:</strong> A hidden injection script is bundled into deployed sites. This script intercepts user inputs and form submissions, preventing normal submission paths to securely transmit the data to the backend Cloudflare Worker.</li>
+<li><strong>Management & Analytics:</strong> Both general users and admins have dedicated dashboards to view captured data, manage deployed sites, upgrade their subscription plans via secure payments, and manage user lifecycles.</li>
+<li><strong>Monetization & Plans:</strong> The platform includes different subscription tiers (Free, Basic, Premium, Gold) which gate the number of deployed sites, template accessibility, data retention periods, and visibility of captured data.</li>
+</ul>
+<h2>2. Architecture & Data Flow</h2>
+<p>The system is organized into a modular three-tier architecture:</p>
+<p>1. <strong>Frontend UI (Static HTML):</strong></p>
+<ul>
+<li>The primary dashboards (<code>dashboard.html</code>, <code>profile.html</code>, <code>deploy.html</code>, etc.) are plain HTML files styled with Tailwind CSS via CDN.</li>
+<li>Client-side interactions fetch data from the backend using standard REST API calls (<code>fetch</code>), storing session tokens securely in <code>localStorage</code> and <code>sessionStorage</code>.</li>
+</ul>
+<p>2. <strong>Backend API (Cloudflare Worker - <code>worker.js</code>):</strong></p>
+<ul>
+<li>Operates strictly as a serverless REST API processing routing, data validation, KV storage queries, and bridging the Vercel API.</li>
+<li>Handles all persistent states and records utilizing Cloudflare KV (Key-Value) store. It uses a prefix-based key system to manage users, site deployments, captures, templates, and active sessions.</li>
+</ul>
+<p>3. <strong>External Integrations:</strong></p>
+<ul>
+<li><strong>Vercel API:</strong> Deployed user HTML content is forwarded to Vercel via its REST API (using a Vercel Authorization Token) to spin up isolated <code>.vercel.app</code> disposable subdomains without exposing the Cloudflare Worker directly to end-user traffic.</li>
+<li><strong>Payment Gateway:</strong> Plan upgrades hook into the D-TECH Secure Payment Gateway, validating tokens server-to-server after frontend redirects.</li>
+</ul>
+<p><strong>Data Capture Flow:</strong></p>
+<p>1. User deploys a site. The worker bundles <code>injection.js</code> directly into the <code>&lt;/body&gt;</code> tag of the user's HTML.</p>
+<p>2. A visitor loads the Vercel-hosted subdomain. The <code>injection.js</code> script actively binds to forms and captures idle typing and form submissions.</p>
+<p>3. Upon submission (or clicking submit-like buttons), the script prevents the default form action and uses <code>fetch</code> to POST the data to the Cloudflare Worker's <code>/api/capture</code> endpoint.</p>
+<p>4. For multi-stage captures (Two-Page Redirect), Stage 1 data is temporarily stored in <code>sessionStorage</code> and redirected to <code>/verify/</code> where Stage 2 gathers the rest of the inputs, combining both payloads before transmission.</p>
+<h2>3. Frontend Files Breakdown (High-Level Summary)</h2>
+<ul>
+<li><strong><code>index.html</code></strong>: The main landing page. Provides tabs for new users to register and generate a unique key, existing users to sign in with a username/password, or legacy users to sign in using their unique code.</li>
+<li><strong><code>dashboard.html</code></strong>: The primary user hub displaying an overview of recent captures, subscription status, system analytics, and shortcuts to deployment tools.</li>
+<li><strong><code>profile.html</code></strong>: Allows users to manage their account settings, view active deployments (sites), delete sites, and upgrade their account.</li>
+<li><strong><code>deploy.html</code></strong>: The core deployment interface. Users specify a subdomain, select a pre-built template or provide custom HTML (via an embedded CodeMirror editor), and configure the post-capture redirect URL.</li>
+<li><strong><code>captures.html</code></strong>: Dedicated to displaying paginated tables of data captured from the user's deployed sites.</li>
+<li><strong><code>plans.html</code></strong>: Displays the available subscription tiers (Free, Basic, Premium, Gold) and outlines the limits for each. Initiates the payment/upgrade process.</li>
+<li><strong><code>dtech.html</code></strong>: A secondary utility page typically used to process voucher claims or alternative payment validations.</li>
+<li><strong><code>help.html</code></strong>: An instructional page with static content explaining how to use the platform's features.</li>
+<li><strong><code>admin-login.html</code> & <code>login.html</code></strong>: Dedicated authentication portals for system administrators.</li>
+<li><strong><code>admin.html</code></strong>: The master control panel for administrators. It features sections to manage users (suspend, ban, change plans), manage templates, view system-wide analytics, and handle global site deployments.</li>
+</ul>
+<h2>4. Backend Logic & API Endpoints (`worker.js`)</h2>
+<p>The Cloudflare Worker routes all requests dynamically and handles CORS headers correctly to ensure the web UI can communicate seamlessly.</p>
+<p><strong>Data Storage (Cloudflare KV Keys):</strong></p>
+<ul>
+<li><code>user::{code}</code>: User account data (plan, status, expiry).</li>
+<li><code>username::{name}</code>: Maps a username to a unique code.</li>
+<li><code>session::{token}</code>: Active session token mapped to a user code.</li>
+<li><code>{subdomain}</code>: Metadata for a deployed site (owner, template, HTML content).</li>
+<li><code>{subdomain}::stage2</code>: Optional Stage 2 HTML content for multi-stage templates.</li>
+<li><code>capture::{userCode}::{timestamp}::{uuid}</code>: Raw captured form data payloads.</li>
+<li><code>template::{name}</code>: Saved template data.</li>
+<li><code>code_map::{userCode}</code>: An array of deployed sites owned by the user.</li>
+</ul>
+<p><strong>Key API Endpoints:</strong></p>
+<p><strong>Authentication & User Management:</strong></p>
+<ul>
+<li><code>POST /api/auth/register</code>: Creates a new user, reserving a username and assigning a unique UUID-based code. Defaults to the 'Free' plan.</li>
+<li><code>POST /api/auth/login</code>: Validates username/password or legacy codes. Issues a 7-day <code>sessionToken</code> stored in KV.</li>
+<li><code>POST /api/auth/set-username</code>: Allows legacy users to define a username.</li>
+<li><code>POST /api/auth/start-trial</code>: Grants a one-time 3-day Premium trial upgrade.</li>
+<li><code>POST /api/auth/settings</code>: Updates user-specific settings like data retention periods.</li>
+</ul>
+<p><strong>Public Deployments & Sites:</strong></p>
+<ul>
+<li><code>GET /api/public/check-subdomain</code>: Validates if a requested subdomain is available or already owned by the current user.</li>
+<li><code>POST /api/public/deploy</code>: The core deployment engine. Validates limits, injects tracking scripts, patches Vercel project settings, uploads files to Vercel, waits 10 seconds, and applies the <code>.vercel.app</code> alias.</li>
+<li><code>DELETE /api/public/sites</code>: Deletes a deployed site from KV, removes its Vercel footprint, and deletes all associated capture data.</li>
+</ul>
+<p><strong>Data Capture:</strong></p>
+<ul>
+<li><code>POST /api/capture</code>: Receives raw form data from injected scripts. Applies plan-specific TTLs (Time-To-Live) before saving the payload to KV.</li>
+<li><code>GET /api/public/captures</code>: Returns paginated capture data for the authenticated user, enforcing visibility limits based on their subscription tier.</li>
+<li><code>DELETE /api/public/captures</code>: Allows a user to delete a specific capture record.</li>
+</ul>
+<p><strong>Templates:</strong></p>
+<ul>
+<li><code>GET /api/public/templates</code>: Retrieves a list of available templates, filtering access based on plan tiers (e.g., Gold exclusive).</li>
+<li><code>GET /api/public/template-preview</code>: Renders the HTML of a template directly in the browser, injecting an overlay script to strictly disable form submissions and interactions for safe viewing.</li>
+</ul>
+<p><strong>Payments & Upgrades:</strong></p>
+<ul>
+<li><code>POST /api/pay/initiate</code>: Generates an <code>orderId</code> and returns a redirect URL to the external D-TECH Secure Payment Gateway.</li>
+<li><code>POST /api/pay/verify</code>: Called after a user returns from payment. Validates the payment token against the external gateway and applies the corresponding plan upgrade to the user's account.</li>
+</ul>
+<p><strong>Admin Routes (Protected by Admin Cookie):</strong></p>
+<ul>
+<li><code>POST /admin/login</code>: Authenticates the admin user and sets a secure HTTP-only cookie.</li>
+<li><code>GET /api/admin/analytics</code>: Aggregates total users, active subscriptions, total active sites, and total captures via KV pagination.</li>
+<li><code>GET /api/admin/users</code>: Lists all registered users.</li>
+<li><code>POST /api/admin/users/action</code>: Executes administrative actions on a user (suspend, ban, activate, delete, update plan).</li>
+<li><code>GET / POST / DELETE /api/admin/templates</code>: Full CRUD access for the system's global templates.</li>
+<li><code>GET / DELETE /api/admin/sites</code>: View and forcefully delete any deployed site on the platform.</li>
+<li><code>GET / POST /api/admin/vouchers</code>: Manage and process pending voucher upgrades.</li>
+</ul>
+
+
+      </div>
+    </main>
+
+    <footer>
+      Engineered by <a href="https://about.preasx24.co.za">Jonas Mochebane</a> | A Map of The D-TECH Ecosystem
+    </footer>
+  </body>
+</html>
