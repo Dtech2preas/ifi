@@ -1,13 +1,17 @@
-{
-  "users": [
-    {
-      "id": "admin-1",
-      "username": "Yolokazi",
-      "passwordHash": "17a9bb8b5878ee6a1aa9ab5821aeea849f57de8c239c30a12183edb1ab52500f",
-      "role": "Founder",
-      "permissions": {
-        "fullAccess": true
-      }
-    }
-  ]
-}
+
+
+Dear madam/sir
+
+This is a test email from D-TECH Services to verify that the email routing for Abundant Solutions is working correctly.
+
+The purpose of this test is to confirm that emails sent to test@abundantsolutions.co.za are successfully delivered to the configured destination mailbox.
+
+No action is required. This is only a technical test.
+
+Kind regards
+D-TECH Services
+
+
+a
+Understood thank you very much
+Show quoted text
