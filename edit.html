@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-TECH Code Editor</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #0f1117;
+    color: #e6e6e6;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* TOP BAR */
+.topbar {
+    height: 54px;
+    background: #171a22;
+    border-bottom: 1px solid #292d38;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 10px;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 12px;
+    white-space: nowrap;
+}
+
+.logo span {
+    color: #5ea7ff;
+}
+
+.toolbar {
+    display: flex;
+    gap: 7px;
+}
+
+.btn {
+    background: #242936;
+    color: #eee;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.btn:hover {
+    background: #303645;
+}
+
+.btn.primary {
+    background: #2878e8;
+}
+
+.btn.primary:hover {
+    background: #3988f5;
+}
+
+.btn.success {
+    background: #238636;
+}
+
+.btn.danger {
+    background: #b83232;
+}
+
+.spacer {
+    flex: 1;
+}
+
+.status {
+    font-size: 12px;
+    color: #888;
+}
+
+/* MAIN */
+.main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 250px;
+    background: #14171e;
+    border-right: 1px solid #292d38;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 13px;
+    border-bottom: 1px solid #292d38;
+    font-size: 12px;
+    font-weight: bold;
+    color: #aaa;
+    display: flex;
+    justify-content: space-between;
+}
+
+.folder-name {
+    color: #5ea7ff;
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.file-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 6px 0;
+}
+
+.file-item {
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.file-item:hover {
+    background: #20242e;
+}
+
+.file-item.active {
+    background: #29364d;
+    color: white;
+}
+
+.file-icon {
+    width: 18px;
+    text-align: center;
+}
+
+.folder {
+    color: #d5b85a;
+}
+
+/* EDITOR */
+.workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.tabs {
+    height: 40px;
+    background: #171a22;
+    border-bottom: 1px solid #292d38;
+    display: flex;
+    overflow-x: auto;
+}
+
+.tab {
+    height: 40px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-right: 1px solid #292d38;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.tab:hover {
+    background: #20242e;
+}
+
+.tab.active {
+    background: #0f1117;
+    color: white;
+}
+
+.tab .close {
+    color: #777;
+}
+
+.tab .close:hover {
+    color: white;
+}
+
+.editor-area {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+#editor {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: #0f1117;
+    color: #e6e6e6;
+    padding: 18px;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    tab-size: 4;
+}
+
+/* WELCOME */
+.welcome {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #777;
+}
+
+.welcome h1 {
+    color: #ddd;
+    margin-bottom: 8px;
+}
+
+.welcome p {
+    max-width: 450px;
+    line-height: 1.6;
+}
+
+/* PREVIEW */
+.preview {
+    position: absolute;
+    inset: 0;
+    background: white;
+    display: none;
+}
+
+.preview iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* BOTTOM */
+.bottom {
+    height: 28px;
+    background: #2878e8;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 11px;
+    gap: 20px;
+}
+
+/* SEARCH */
+.search {
+    margin: 8px;
+    width: calc(100% - 16px);
+    background: #20242e;
+    color: white;
+    border: 1px solid #303642;
+    border-radius: 5px;
+    padding: 8px;
+    outline: none;
+}
+
+.search:focus {
+    border-color: #2878e8;
+}
+
+/* CONTEXT MENU */
+.context-menu {
+    position: fixed;
+    display: none;
+    background: #1d212b;
+    border: 1px solid #353a46;
+    box-shadow: 0 8px 25px rgba(0,0,0,.4);
+    border-radius: 6px;
+    z-index: 999;
+    min-width: 150px;
+}
+
+.context-menu div {
+    padding: 9px 13px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.context-menu div:hover {
+    background: #2b303c;
+}
+
+/* MOBILE */
+@media(max-width: 700px) {
+    .sidebar {
+        width: 190px;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .btn {
+        padding: 7px 8px;
+    }
+
+    .status {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+
+        <div class="logo">
+            D-TECH <span>Code Editor</span>
+        </div>
+
+        <div class="toolbar">
+
+            <button class="btn primary" id="openFolder">
+                📁 Open Folder
+            </button>
+
+            <button class="btn success" id="saveBtn">
+                💾 Save
+            </button>
+
+            <button class="btn" id="saveAllBtn">
+                💾 Save All
+            </button>
+
+            <button class="btn" id="previewBtn">
+                👁 Preview
+            </button>
+
+        </div>
+
+        <div class="spacer"></div>
+
+        <div class="status" id="status">
+            No folder open
+        </div>
+
+    </div>
+
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+
+                <span>EXPLORER</span>
+
+                <span class="folder-name" id="folderName">
+                    No folder
+                </span>
+
+            </div>
+
+            <input
+                type="text"
+                class="search"
+                id="search"
+                placeholder="Search files..."
+            >
+
+            <div class="file-list" id="fileList"></div>
+
+        </aside>
+
+
+        <!-- WORKSPACE -->
+        <section class="workspace">
+
+            <div class="tabs" id="tabs"></div>
+
+            <div class="editor-area">
+
+                <div class="welcome" id="welcome">
+
+                    <div>
+
+                        <h1>D-TECH Code Editor</h1>
+
+                        <p>
+                            Open a website folder to start editing
+                            your HTML, CSS and JavaScript files.
+                        </p>
+
+                        <button
+                            class="btn primary"
+                            onclick="openFolder()"
+                        >
+                            📁 Open Website Folder
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <textarea
+                    id="editor"
+                    spellcheck="false"
+                    style="display:none"
+                ></textarea>
+
+                <div class="preview" id="preview">
+
+                    <iframe
+                        id="previewFrame"
+                        sandbox="allow-scripts allow-forms allow-modals"
+                    ></iframe>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- STATUS BAR -->
+    <div class="bottom">
+
+        <span id="fileStatus">
+            Ready
+        </span>
+
+        <span>
+            D-TECH Editor
+        </span>
+
+        <span>
+            Ctrl + S = Save
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- CONTEXT MENU -->
+<div class="context-menu" id="contextMenu">
+
+    <div id="renameFile">
+        ✏ Rename
+    </div>
+
+    <div id="deleteFile">
+        🗑 Delete
+    </div>
+
+</div>
+
+
+<script>
+
+let directoryHandle = null;
+
+let files = [];
+
+let openFiles = new Map();
+
+let activeFile = null;
+
+let previewVisible = false;
+
+
+/* =========================================
+   OPEN FOLDER
+========================================= */
+
+document
+    .getElementById("openFolder")
+    .addEventListener("click", openFolder);
+
+
+async function openFolder() {
+
+    try {
+
+        directoryHandle =
+            await window.showDirectoryPicker({
+                mode: "readwrite"
+            });
+
+        document.getElementById("folderName").textContent =
+            directoryHandle.name;
+
+        document.getElementById("status").textContent =
+            "Folder opened";
+
+        await loadFiles();
+
+    } catch(error) {
+
+        console.log(error);
+
+    }
+
+}
+
+
+/* =========================================
+   LOAD FILES
+========================================= */
+
+async function loadFiles() {
+
+    files = [];
+
+    await scanDirectory(
+        directoryHandle,
+        ""
+    );
+
+    renderFiles();
+
+}
+
+
+/* =========================================
+   SCAN DIRECTORY
+========================================= */
+
+async function scanDirectory(
+    directory,
+    path
+) {
+
+    for await (
+        const entry of directory.values()
+    ) {
+
+        const currentPath =
+            path
+            ? path + "/" + entry.name
+            : entry.name;
+
+        if (
+            entry.kind === "file"
+        ) {
+
+            const extension =
+                entry.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+
+            const allowed = [
+                "html",
+                "htm",
+                "css",
+                "js",
+                "json",
+                "txt",
+                "xml",
+                "md",
+                "svg",
+                "php",
+                "ts"
+            ];
+
+            if (
+                allowed.includes(extension)
+            ) {
+
+                files.push({
+                    name: entry.name,
+                    path: currentPath,
+                    handle: entry
+                });
+
+            }
+
+        } else if (
+            entry.kind === "directory"
+        ) {
+
+            await scanDirectory(
+                entry,
+                currentPath
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================
+   FILE LIST
+========================================= */
+
+function renderFiles(
+    filter = ""
+) {
+
+    const container =
+        document.getElementById("fileList");
+
+    container.innerHTML = "";
+
+    const filtered =
+        files.filter(file =>
+            file.path
+                .toLowerCase()
+                .includes(
+                    filter.toLowerCase()
+                )
+        );
+
+    filtered.sort(
+        (a,b) =>
+            a.path.localeCompare(b.path)
+    );
+
+
+    for (
+        const file of filtered
+    ) {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "file-item";
+
+        if (
+            activeFile &&
+            activeFile.path === file.path
+        ) {
+
+            div.classList.add("active");
+
+        }
+
+
+        const icon =
+            getFileIcon(file.name);
+
+
+        div.innerHTML = `
+            <span class="file-icon">
+                ${icon}
+            </span>
+
+            <span>
+                ${escapeHTML(file.path)}
+            </span>
+        `;
+
+
+        div.onclick = () =>
+            openFile(file);
+
+
+        container.appendChild(div);
+
+    }
+
+}
+
+
+/* =========================================
+   FILE ICON
+========================================= */
+
+function getFileIcon(
+    filename
+) {
+
+    const ext =
+        filename
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+    const icons = {
+
+        html: "🌐",
+        htm: "🌐",
+        css: "🎨",
+        js: "🟨",
+        json: "📋",
+        txt: "📄",
+        xml: "📄",
+        md: "📝",
+        svg: "🖼️",
+        php: "🐘",
+        ts: "🔷"
+
+    };
+
+    return icons[ext] || "📄";
+
+}
+
+
+/* =========================================
+   OPEN FILE
+========================================= */
+
+async function openFile(
+    file
+) {
+
+    try {
+
+        let content;
+
+
+        if (
+            openFiles.has(file.path)
+        ) {
+
+            content =
+                openFiles.get(file.path).content;
+
+        } else {
+
+            const fileObject =
+                await file.handle.getFile();
+
+            content =
+                await fileObject.text();
+
+
+            openFiles.set(
+                file.path,
+                {
+                    file,
+                    content,
+                    modified: false
+                }
+            );
+
+        }
+
+
+        activeFile = file;
+
+        document.getElementById("welcome")
+            .style.display = "none";
+
+        document.getElementById("editor")
+            .style.display = "block";
+
+        document.getElementById("preview")
+            .style.display = "none";
+
+        previewVisible = false;
+
+        document.getElementById("editor")
+            .value = content;
+
+        renderTabs();
+
+        renderFiles();
+
+        updateStatus();
+
+    } catch(error) {
+
+        alert(
+            "Could not open file:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   TABS
+========================================= */
+
+function renderTabs() {
+
+    const container =
+        document.getElementById("tabs");
+
+    container.innerHTML = "";
+
+
+    for (
+        const [path, data]
+        of openFiles
+    ) {
+
+        const tab =
+            document.createElement("div");
+
+        tab.className =
+            "tab";
+
+
+        if (
+            activeFile &&
+            activeFile.path === path
+        ) {
+
+            tab.classList.add("active");
+
+        }
+
+
+        const filename =
+            path.split("/").pop();
+
+
+        tab.innerHTML = `
+            <span>
+                ${data.modified ? "● " : ""}
+                ${escapeHTML(filename)}
+            </span>
+
+            <span class="close">
+                ×
+            </span>
+        `;
+
+
+        tab.onclick = function(e) {
+
+            if (
+                e.target.classList
+                    .contains("close")
+            ) {
+
+                closeFile(path);
+
+            } else {
+
+                const file =
+                    files.find(
+                        f => f.path === path
+                    );
+
+                if(file)
+                    openFile(file);
+
+            }
+
+        };
+
+
+        container.appendChild(tab);
+
+    }
+
+}
+
+
+/* =========================================
+   CLOSE FILE
+========================================= */
+
+function closeFile(path) {
+
+    const data =
+        openFiles.get(path);
+
+
+    if (
+        data &&
+        data.modified
+    ) {
+
+        const answer =
+            confirm(
+                "This file has unsaved changes.\n\nClose anyway?"
+            );
+
+        if(!answer)
+            return;
+
+    }
+
+
+    openFiles.delete(path);
+
+
+    if (
+        activeFile &&
+        activeFile.path === path
+    ) {
+
+        const remaining =
+            [...openFiles.keys()];
+
+
+        if (
+            remaining.length
+        ) {
+
+            const next =
+                files.find(
+                    f =>
+                    f.path ===
+                    remaining[
+                        remaining.length - 1
+                    ]
+                );
+
+            if(next)
+                openFile(next);
+
+        } else {
+
+            activeFile = null;
+
+            document.getElementById("editor")
+                .style.display = "none";
+
+            document.getElementById("welcome")
+                .style.display = "flex";
+
+        }
+
+    }
+
+
+    renderTabs();
+
+}
+
+
+/* =========================================
+   EDITOR CHANGES
+========================================= */
+
+document
+    .getElementById("editor")
+    .addEventListener(
+        "input",
+        function() {
+
+            if(!activeFile)
+                return;
+
+
+            const data =
+                openFiles.get(
+                    activeFile.path
+                );
+
+
+            data.content =
+                this.value;
+
+            data.modified =
+                true;
+
+
+            renderTabs();
+
+            updateStatus();
+
+        }
+    );
+
+
+/* =========================================
+   SAVE
+========================================= */
+
+document
+    .getElementById("saveBtn")
+    .addEventListener(
+        "click",
+        saveCurrent
+    );
+
+
+async function saveCurrent() {
+
+    if(!activeFile) {
+
+        alert("No file selected.");
+
+        return;
+
+    }
+
+
+    const data =
+        openFiles.get(
+            activeFile.path
+        );
+
+
+    try {
+
+        const writable =
+            await data.file.handle
+                .createWritable();
+
+
+        await writable.write(
+            data.content
+        );
+
+
+        await writable.close();
+
+
+        data.modified =
+            false;
+
+
+        renderTabs();
+
+        updateStatus();
+
+        document.getElementById("status")
+            .textContent =
+            "Saved " +
+            activeFile.name;
+
+
+    } catch(error) {
+
+        alert(
+            "Could not save file:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SAVE ALL
+========================================= */
+
+document
+    .getElementById("saveAllBtn")
+    .addEventListener(
+        "click",
+        saveAll
+    );
+
+
+async function saveAll() {
+
+    let count = 0;
+
+
+    for (
+        const [path, data]
+        of openFiles
+    ) {
+
+        if(!data.modified)
+            continue;
+
+
+        try {
+
+            const writable =
+                await data.file.handle
+                    .createWritable();
+
+
+            await writable.write(
+                data.content
+            );
+
+
+            await writable.close();
+
+
+            data.modified =
+                false;
+
+            count++;
+
+        } catch(error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    renderTabs();
+
+    updateStatus();
+
+    document.getElementById("status")
+        .textContent =
+        count +
+        " file(s) saved";
+
+}
+
+
+/* =========================================
+   PREVIEW
+========================================= */
+
+document
+    .getElementById("previewBtn")
+    .addEventListener(
+        "click",
+        preview
+    );
+
+
+async function preview() {
+
+    if(!activeFile) {
+
+        alert(
+            "Open an HTML file first."
+        );
+
+        return;
+
+    }
+
+
+    const extension =
+        activeFile.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    if (
+        extension !== "html" &&
+        extension !== "htm"
+    ) {
+
+        alert(
+            "Preview works with HTML files."
+        );
+
+        return;
+
+    }
+
+
+    const html =
+        document.getElementById("editor")
+            .value;
+
+
+    const frame =
+        document.getElementById(
+            "previewFrame"
+        );
+
+
+    frame.srcdoc = html;
+
+
+    document.getElementById("editor")
+        .style.display = "none";
+
+    document.getElementById("welcome")
+        .style.display = "none";
+
+    document.getElementById("preview")
+        .style.display = "block";
+
+
+    previewVisible = true;
+
+}
+
+
+/* =========================================
+   KEYBOARD SHORTCUTS
+========================================= */
+
+document.addEventListener(
+    "keydown",
+    function(e) {
+
+        if (
+            (e.ctrlKey || e.metaKey) &&
+            e.key.toLowerCase() === "s"
+        ) {
+
+            e.preventDefault();
+
+            saveCurrent();
+
+        }
+
+
+        if (
+            e.ctrlKey &&
+            e.key.toLowerCase() === "s" &&
+            e.shiftKey
+        ) {
+
+            e.preventDefault();
+
+            saveAll();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+document
+    .getElementById("search")
+    .addEventListener(
+        "input",
+        function() {
+
+            renderFiles(
+                this.value
+            );
+
+        }
+    );
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+function updateStatus() {
+
+    if(!activeFile) {
+
+        document.getElementById(
+            "fileStatus"
+        ).textContent =
+            "Ready";
+
+        return;
+
+    }
+
+
+    const data =
+        openFiles.get(
+            activeFile.path
+        );
+
+
+    const lines =
+        document.getElementById(
+            "editor"
+        ).value.split("\n").length;
+
+
+    document.getElementById(
+        "fileStatus"
+    ).textContent =
+        activeFile.path +
+        " | " +
+        lines +
+        " lines" +
+        (
+            data.modified
+                ? " | Modified"
+                : " | Saved"
+        );
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(
+    value
+) {
+
+    return value
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================
+   TAB KEY IN EDITOR
+========================================= */
+
+document
+    .getElementById("editor")
+    .addEventListener(
+        "keydown",
+        function(e) {
+
+            if(e.key === "Tab") {
+
+                e.preventDefault();
+
+                const start =
+                    this.selectionStart;
+
+                const end =
+                    this.selectionEnd;
+
+
+                this.value =
+                    this.value.substring(
+                        0,
+                        start
+                    ) +
+                    "    " +
+                    this.value.substring(
+                        end
+                    );
+
+
+                this.selectionStart =
+                    this.selectionEnd =
+                    start + 4;
+
+
+                this.dispatchEvent(
+                    new Event("input")
+                );
+
+            }
+
+        }
+    );
+
+
+/* =========================================
+   CLOSE CONTEXT MENU
+========================================= */
+
+document.addEventListener(
+    "click",
+    function() {
+
+        document.getElementById(
+            "contextMenu"
+        ).style.display = "none";
+
+    }
+);
+
+
+/* =========================================
+   BROWSER SUPPORT CHECK
+========================================= */
+
+if (
+    !("showDirectoryPicker" in window)
+) {
+
+    document.getElementById("status")
+        .textContent =
+        "Use Chrome or Edge";
+
+}
+
+</script>
+
+</body>
+</html>
